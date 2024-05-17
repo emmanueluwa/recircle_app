@@ -1,4 +1,3 @@
-import colours from "@utils/colours";
 import WelcomeHeader from "@ui/WelcomeHeader";
 import { FC } from "react";
 import { StyleSheet, View } from "react-native";
@@ -7,10 +6,12 @@ import AppButton from "@ui/AppButton";
 import FormDivider from "./FormDivider";
 import FormNavigator from "@ui/FormNavigator";
 import CustomKeyAvoidingView from "@ui/CustomKeyAvoidingView";
+import { useNavigation } from "@react-navigation/native";
 
 interface Props {}
 
 const ForgotPassword: FC<Props> = (props) => {
+  const { navigate } = useNavigation();
   return (
     <CustomKeyAvoidingView>
       <View style={styles.innerContainer}>
@@ -25,7 +26,12 @@ const ForgotPassword: FC<Props> = (props) => {
           <AppButton title="Request Link" />
           <FormDivider />
 
-          <FormNavigator leftTitle="Sign Up" rightTitle="Sign In" />
+          <FormNavigator
+            onLeftPress={() => navigate("SignUp")}
+            onRightPress={() => navigate("SignIn")}
+            leftTitle="Sign Up"
+            rightTitle="Sign In"
+          />
         </View>
       </View>
     </CustomKeyAvoidingView>

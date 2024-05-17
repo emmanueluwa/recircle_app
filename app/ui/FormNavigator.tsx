@@ -28,7 +28,7 @@ const FormNavigator: FC<Props> = ({
         <Text style={styles.title}>{leftTitle}</Text>
       </Pressable>
       <Pressable onPress={onRightPress}>
-        <Text style={styles.title}>{leftTitle}</Text>
+        <Text style={styles.title}>{rightTitle}</Text>
       </Pressable>
     </View>
   );
