@@ -6,7 +6,8 @@
     "paths": {
       "@views/*": ["app/views/*"],
       "@components/*": ["app/components/*"],
-      "@utils/*": ["app/utils/*"]
+      "@utils/*": ["app/utils/*"],
+      "@ui/*": ["app/ui/*"]
     }
   }
 }
