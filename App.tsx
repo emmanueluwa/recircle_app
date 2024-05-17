@@ -7,11 +7,12 @@ import {
   StatusBar,
 } from "react-native";
 import SignIn from "@views/SignIn";
+import SignUp from "@views/SignUp";
 
 export default function App() {
   return (
     <SafeAreaView style={styles.container}>
-      <SignIn />
+      <SignUp />
     </SafeAreaView>
   );
 }

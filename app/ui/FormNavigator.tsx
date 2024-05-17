@@ -12,8 +12,8 @@ import {
 interface Props {
   leftTitle: string;
   rightTitle: string;
-  onLeftPress(): void;
-  onRightPress(): void;
+  onLeftPress?(): void;
+  onRightPress?(): void;
 }
 
 const FormNavigator: FC<Props> = ({
