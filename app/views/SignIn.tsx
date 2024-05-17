@@ -3,6 +3,7 @@ import WelcomeHeader from "@ui/WelcomeHeader";
 import { FC } from "react";
 import { StyleSheet, View } from "react-native";
 import FormInput from "@ui/FormInput";
+import AppButton from "@ui/AppButton";
 
 interface Props {}
 
@@ -18,6 +19,7 @@ const SignIn: FC<Props> = (props) => {
           autoCapitalize="none"
         />
         <FormInput placeholder="Passoword" secureTextEntry />
+        <AppButton title="Sign in" />
       </View>
     </View>
   );
@@ -26,15 +28,6 @@ const SignIn: FC<Props> = (props) => {
 const styles = StyleSheet.create({
   container: {
     padding: 15,
-  },
-  image: { width: 250, height: 250 },
-  input: {
-    width: "100%",
-    padding: 8,
-    borderRadius: 5,
-    marginBottom: 15,
-    color: colours.primary,
-    borderWidth: 1,
   },
   formContainer: { marginTop: 30 },
 });
