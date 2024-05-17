@@ -13,12 +13,13 @@ import AppButton from "@ui/AppButton";
 import FormDivider from "./FormDivider";
 import FormNavigator from "@ui/FormNavigator";
 import CustomKeyAvoidingView from "@ui/CustomKeyAvoidingView";
-import { useNavigation } from "@react-navigation/native";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
+import { AuthStackParamList } from "app/navigator/AuthNavigator";
 
 interface Props {}
 
 const SignIn: FC<Props> = (props) => {
-  const { navigate } = useNavigation();
+  const { navigate } = useNavigation<NavigationProp<AuthStackParamList>>();
 
   return (
     <CustomKeyAvoidingView>
@@ -32,7 +33,7 @@ const SignIn: FC<Props> = (props) => {
             autoCapitalize="none"
           />
           <FormInput placeholder="Password" secureTextEntry />
-          <AppButton title="Sign in" />
+          <AppButton title="Sign In" />
           <FormDivider />
 
           <FormNavigator
