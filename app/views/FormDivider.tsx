@@ -1,13 +1,6 @@
 import colours from "@utils/colours";
 import { FC } from "react";
-import {
-  ColorValue,
-  DimensionValue,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { ColorValue, DimensionValue, StyleSheet, View } from "react-native";
 
 interface Props {
   width?: DimensionValue;

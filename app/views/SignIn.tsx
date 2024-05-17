@@ -5,6 +5,7 @@ import { StyleSheet, View } from "react-native";
 import FormInput from "@ui/FormInput";
 import AppButton from "@ui/AppButton";
 import FormDivider from "./FormDivider";
+import FormNavigator from "@ui/FormNavigator";
 
 interface Props {}
 
@@ -22,6 +23,8 @@ const SignIn: FC<Props> = (props) => {
         <FormInput placeholder="Passoword" secureTextEntry />
         <AppButton title="Sign in" />
         <FormDivider />
+
+        <FormNavigator leftTitle="Forgot Password" rightTitle="Sign Up" />
       </View>
     </View>
   );
