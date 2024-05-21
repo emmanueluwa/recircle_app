@@ -14,6 +14,7 @@ import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { AuthStackParamList } from "app/navigator/AuthNavigator";
 import { newUserSchema, yupValidate } from "@utils/validator";
 import { runAxiosAsync } from "app/api/runAxiosAsync";
+import { showMessage } from "react-native-flash-message";
 
 interface Props {}
 
@@ -24,6 +25,8 @@ const SignUp: FC<Props> = (props) => {
     password: "",
   });
 
+  const [busy, setBusy] = useState(false);
+
   const { navigate } = useNavigation<NavigationProp<AuthStackParamList>>();
 
   const handleChange = (name: string) => (text: string) => {
@@ -32,11 +35,17 @@ const SignUp: FC<Props> = (props) => {
 
   const handleSubmit = async () => {
     const { values, error } = await yupValidate(newUserSchema, userInfo);
+
+    if (error) return showMessage({ message: error, type: "danger" });
+
+    //set busy if api request is sent
+    setBusy(true);
     const res = await runAxiosAsync<{ message: string }>(
       axios.post("http://192.168.1.84:8000/auth/sign-up", values)
     );
 
-    console.log(res);
+    if (res?.message) showMessage({ message: res.message, type: "success" });
+    setBusy(false);
   };
   const { email, name, password } = userInfo;
 
@@ -65,7 +74,7 @@ const SignUp: FC<Props> = (props) => {
             onChangeText={handleChange("password")}
           />
 
-          <AppButton active={false} title="Sign Up" onPress={handleSubmit} />
+          <AppButton active={!busy} title="Sign Up" onPress={handleSubmit} />
 
           <FormDivider />
 
