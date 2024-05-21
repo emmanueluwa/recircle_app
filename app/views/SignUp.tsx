@@ -12,28 +12,8 @@ import FormNavigator from "@ui/FormNavigator";
 import CustomKeyAvoidingView from "@ui/CustomKeyAvoidingView";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { AuthStackParamList } from "app/navigator/AuthNavigator";
-
-const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-const passwordRegex =
-  /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-
-yup.addMethod(yup.string, "email", function validateEmail(message) {
-  return this.matches(emailRegex, {
-    message,
-    name: "email",
-    excludeEmptyString: true,
-  });
-});
-
-export const newUserSchema = yup.object({
-  name: yup.string().required("Name is missing"),
-  email: yup.string().email("Invalid email").required("Email is missing"),
-  password: yup
-    .string()
-    .required("Password is missing")
-    .min(8, "Password needs to be 8 a more characters")
-    .matches(passwordRegex, "Password is not safe enough"),
-});
+import { newUserSchema, yupValidate } from "@utils/validator";
+import { runAxiosAsync } from "app/api/runAxiosAsync";
 
 interface Props {}
 
@@ -51,32 +31,12 @@ const SignUp: FC<Props> = (props) => {
   };
 
   const handleSubmit = async () => {
-    try {
-      const info = await newUserSchema.validate(userInfo);
-      const { data } = await axios.post(
-        "http://192.168.1.84:8000/auth/sign-up",
-        info
-        // {
-        //   headers: {
-        //     "Content-Type": "application/json",
-        //     Accept: "application/json",
-        //   },
-        // }
-      );
-      console.log(data);
-    } catch (error) {
-      if (error instanceof yup.ValidationError) {
-        console.log("Invalid form", error.message);
-      }
-      if (error instanceof axios.AxiosError) {
-        const response = error.response;
-        if (response) {
-          console.log("Invalid form: ", response.data.message);
-        }
-      }
+    const { values, error } = await yupValidate(newUserSchema, userInfo);
+    const res = await runAxiosAsync<{ message: string }>(
+      axios.post("http://192.168.1.84:8000/auth/sign-up", values)
+    );
 
-      console.log((error as any).message);
-    }
+    console.log(res);
   };
   const { email, name, password } = userInfo;
 
@@ -105,7 +65,7 @@ const SignUp: FC<Props> = (props) => {
             onChangeText={handleChange("password")}
           />
 
-          <AppButton title="Sign Up" onPress={handleSubmit} />
+          <AppButton active={false} title="Sign Up" onPress={handleSubmit} />
 
           <FormDivider />
 
