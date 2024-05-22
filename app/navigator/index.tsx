@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import colours from "@utils/colours";
 import AuthNavigator from "./AuthNavigator";
 import { FC } from "react";
+import AppNavigator from "./AppNavigator";
 
 const Stack = createNativeStackNavigator();
 
@@ -15,9 +16,10 @@ const MyTheme = {
 interface Props {}
 
 const Navigator: FC<Props> = (props) => {
+  const loggedIn = true;
   return (
     <NavigationContainer theme={MyTheme}>
-      <AuthNavigator />
+      {!loggedIn ? <AuthNavigator /> : <AppNavigator />}
     </NavigationContainer>
   );
 };
