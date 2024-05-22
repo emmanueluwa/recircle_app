@@ -16,6 +16,7 @@ import { newUserSchema, yupValidate } from "@utils/validator";
 import { runAxiosAsync } from "app/api/runAxiosAsync";
 import { showMessage } from "react-native-flash-message";
 import client from "app/api/client";
+import { SignInRes } from "./SignIn";
 
 interface Props {}
 
@@ -45,7 +46,13 @@ const SignUp: FC<Props> = (props) => {
       client.post("/auth/sign-up", values)
     );
 
-    if (res?.message) showMessage({ message: res.message, type: "success" });
+    if (res?.message) {
+      showMessage({ message: res.message, type: "success" });
+      const signInRes = await runAxiosAsync<SignInRes>(
+        client.post("/auth/sign-in", values)
+      );
+      console.log(signInRes);
+    }
     setBusy(false);
   };
   const { email, name, password } = userInfo;

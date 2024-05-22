@@ -23,7 +23,7 @@ import client from "app/api/client";
 
 interface Props {}
 
-interface SignInRes {
+export interface SignInRes {
   profile: {
     id: string;
     email: string;
@@ -58,7 +58,7 @@ const SignIn: FC<Props> = (props) => {
 
     //set busy if api request is sent
     setBusy(true);
-    const res = await runAxiosAsync<{ message: string }>(
+    const res = await runAxiosAsync<SignInRes>(
       client.post("/auth/sign-in", values)
     );
 
