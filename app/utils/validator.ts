@@ -30,12 +30,20 @@ yup.addMethod(yup.string, "email", function validateEmail(message) {
   });
 });
 
-export const newUserSchema = yup.object({
-  name: yup.string().required("Name is missing"),
+const nameAndEmailValidation = {
   email: yup.string().email("Invalid email").required("Email is missing"),
   password: yup
     .string()
     .required("Password is missing")
     .min(8, "Password needs to be 8 a more characters")
     .matches(passwordRegex, "Password is not safe enough"),
+};
+
+export const newUserSchema = yup.object({
+  name: yup.string().required("Name is missing"),
+  ...nameAndEmailValidation,
+});
+
+export const signInSchema = yup.object({
+  ...nameAndEmailValidation,
 });

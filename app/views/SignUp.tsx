@@ -15,6 +15,7 @@ import { AuthStackParamList } from "app/navigator/AuthNavigator";
 import { newUserSchema, yupValidate } from "@utils/validator";
 import { runAxiosAsync } from "app/api/runAxiosAsync";
 import { showMessage } from "react-native-flash-message";
+import client from "app/api/client";
 
 interface Props {}
 
@@ -41,7 +42,7 @@ const SignUp: FC<Props> = (props) => {
     //set busy if api request is sent
     setBusy(true);
     const res = await runAxiosAsync<{ message: string }>(
-      axios.post("http://192.168.1.84:8000/auth/sign-up", values)
+      client.post("/auth/sign-up", values)
     );
 
     if (res?.message) showMessage({ message: res.message, type: "success" });
