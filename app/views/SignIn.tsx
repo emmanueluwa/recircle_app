@@ -8,6 +8,7 @@ import {
   StyleSheet,
   View,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import FormInput from "@ui/FormInput";
 import AppButton from "@ui/AppButton";
 import FormDivider from "./FormDivider";
@@ -20,6 +21,8 @@ import { showMessage } from "react-native-flash-message";
 import { runAxiosAsync } from "app/api/runAxiosAsync";
 import axios from "axios";
 import client from "app/api/client";
+import { useDispatch } from "react-redux";
+import { updateAuthState } from "app/store/auth";
 
 interface Props {}
 
@@ -47,9 +50,7 @@ const SignIn: FC<Props> = (props) => {
 
   const { navigate } = useNavigation<NavigationProp<AuthStackParamList>>();
 
-  const handleChange = (email: string) => (text: string) => {
-    setUserInfo({ ...userInfo, [email]: text });
-  };
+  const dispatch = useDispatch();
 
   const handleSubmit = async () => {
     const { values, error } = await yupValidate(signInSchema, userInfo);
@@ -63,11 +64,22 @@ const SignIn: FC<Props> = (props) => {
     );
 
     if (res) {
+      //store tokens
       console.log(res);
+      await AsyncStorage.setItem("access-token", res.tokens.access);
+      await AsyncStorage.setItem("refresh-token", res.tokens.refresh);
+
+      dispatch(updateAuthState({ profile: res.profile, pending: false }));
     }
+    setBusy(false);
+  };
+
+  const handleChange = (email: string) => (text: string) => {
+    setUserInfo({ ...userInfo, [email]: text });
   };
 
   const { email, password } = userInfo;
+
   return (
     <CustomKeyAvoidingView>
       <View style={styles.innerContainer}>
