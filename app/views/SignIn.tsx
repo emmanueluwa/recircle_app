@@ -23,22 +23,9 @@ import axios from "axios";
 import client from "app/api/client";
 import { useDispatch } from "react-redux";
 import { updateAuthState } from "app/store/auth";
+import useAuth from "app/hooks/useAuth";
 
 interface Props {}
-
-export interface SignInRes {
-  profile: {
-    id: string;
-    email: string;
-    name: string;
-    verified: boolean;
-    avatar?: string;
-  };
-  tokens: {
-    refresh: string;
-    access: string;
-  };
-}
 
 const SignIn: FC<Props> = (props) => {
   const [userInfo, setUserInfo] = useState({
@@ -46,32 +33,16 @@ const SignIn: FC<Props> = (props) => {
     password: "",
   });
 
-  const [busy, setBusy] = useState(false);
-
   const { navigate } = useNavigation<NavigationProp<AuthStackParamList>>();
 
-  const dispatch = useDispatch();
+  const { signIn } = useAuth();
 
   const handleSubmit = async () => {
     const { values, error } = await yupValidate(signInSchema, userInfo);
 
     if (error) return showMessage({ message: error, type: "danger" });
 
-    //set busy if api request is sent
-    setBusy(true);
-    const res = await runAxiosAsync<SignInRes>(
-      client.post("/auth/sign-in", values)
-    );
-
-    if (res) {
-      //store tokens
-      console.log(res);
-      await AsyncStorage.setItem("access-token", res.tokens.access);
-      await AsyncStorage.setItem("refresh-token", res.tokens.refresh);
-
-      dispatch(updateAuthState({ profile: res.profile, pending: false }));
-    }
-    setBusy(false);
+    if (values) signIn(values);
   };
 
   const handleChange = (email: string) => (text: string) => {
@@ -99,7 +70,7 @@ const SignIn: FC<Props> = (props) => {
             value={password}
             onChangeText={handleChange("password")}
           />
-          <AppButton active={!busy} title="Sign In" onPress={handleSubmit} />
+          <AppButton title="Sign In" onPress={handleSubmit} />
           <FormDivider />
 
           <FormNavigator
