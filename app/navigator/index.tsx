@@ -4,14 +4,14 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import colours from "@utils/colours";
 import AuthNavigator from "./AuthNavigator";
 import { FC, useEffect } from "react";
-import AppNavigator from "./AppNavigator";
-import { useDispatch, useSelector } from "react-redux";
-import { Profile, getAuthState, updateAuthState } from "app/store/auth";
+import { useDispatch } from "react-redux";
+import { Profile, updateAuthState } from "app/store/auth";
 import client from "app/api/client";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { runAxiosAsync } from "app/api/runAxiosAsync";
 import LoadingSpinner from "@ui/LoadingSpinner";
 import useAuth from "app/hooks/useAuth";
+import TabNavigator from "./TabNavigator";
 
 const Stack = createNativeStackNavigator();
 
@@ -57,7 +57,7 @@ const Navigator: FC<Props> = (props) => {
   return (
     <NavigationContainer theme={MyTheme}>
       <LoadingSpinner visible={authState.pending} />
-      {!loggedIn ? <AuthNavigator /> : <AppNavigator />}
+      {!loggedIn ? <AuthNavigator /> : <TabNavigator />}
     </NavigationContainer>
   );
 };
