@@ -8,54 +8,61 @@ import OptionsModal from "@components/OptionsModal";
 import categories from "@utils/categories";
 import CategoryOption from "@ui/CategoryOption";
 import { AntDesign } from "@expo/vector-icons";
+import AppButton from "@ui/AppButton";
+import CustomKeyAvoidingView from "@ui/CustomKeyAvoidingView";
 
 interface Props {}
 
 const NewListing: FC<Props> = ({}) => {
   const [showCategoryModal, setShowCategoryModal] = useState(false);
   return (
-    <View style={styles.container}>
-      <Pressable style={styles.fileSelector}>
-        <View style={styles.iconContainer}>
-          <FontAwesome5 name="images" size={24} color="black" />
-        </View>
-        <Text style={styles.buttonTitle}>Add Images</Text>
-      </Pressable>
-      <FormInput placeholder="Product name" />
-      <FormInput placeholder="Price" />
-      <DatePicker
-        title="Date purchased: "
-        value={new Date()}
-        onChange={() => {}}
-      />
-      <Pressable
-        style={styles.categorySelector}
-        onPress={() => setShowCategoryModal(true)}
-      >
-        <Text style={styles.categoryTitle}>Category</Text>
-        <AntDesign name="caretdown" color={colours.primary} />
-      </Pressable>
+    <CustomKeyAvoidingView>
+      <View style={styles.container}>
+        <Pressable style={styles.fileSelector}>
+          <View style={styles.iconContainer}>
+            <FontAwesome5 name="images" size={24} color="black" />
+          </View>
+          <Text style={styles.buttonTitle}>Add Images</Text>
+        </Pressable>
+        <FormInput placeholder="Product name" />
+        <FormInput placeholder="Price" />
+        <DatePicker
+          title="Date purchased: "
+          value={new Date()}
+          onChange={() => {}}
+        />
+        <Pressable
+          style={styles.categorySelector}
+          onPress={() => setShowCategoryModal(true)}
+        >
+          <Text style={styles.categoryTitle}>Category</Text>
+          <AntDesign name="caretdown" color={colours.primary} />
+        </Pressable>
 
-      <FormInput placeholder="Description" />
+        <FormInput placeholder="Description" multiline numberOfLines={4} />
 
-      <OptionsModal
-        visible={showCategoryModal}
-        onRequestClose={setShowCategoryModal}
-        options={categories}
-        renderItem={(item) => {
-          return <CategoryOption {...item} />;
-        }}
-        onPress={(item) => {
-          console.log(item.name);
-        }}
-      />
-    </View>
+        <AppButton title="List Product" />
+
+        <OptionsModal
+          visible={showCategoryModal}
+          onRequestClose={setShowCategoryModal}
+          options={categories}
+          renderItem={(item) => {
+            return <CategoryOption {...item} />;
+          }}
+          onPress={(item) => {
+            console.log(item.name);
+          }}
+        />
+      </View>
+    </CustomKeyAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     padding: 15,
+    flex: 1,
   },
   fileSelector: {
     marginBottom: 15,
