@@ -7,6 +7,7 @@ import DatePicker from "@ui/DatePicker";
 import OptionsModal from "@components/OptionsModal";
 import categories from "@utils/categories";
 import CategoryOption from "@ui/CategoryOption";
+import { AntDesign } from "@expo/vector-icons";
 
 interface Props {}
 
@@ -27,8 +28,12 @@ const NewListing: FC<Props> = ({}) => {
         value={new Date()}
         onChange={() => {}}
       />
-      <Pressable onPress={() => setShowCategoryModal(true)}>
-        <Text>Category</Text>
+      <Pressable
+        style={styles.categorySelector}
+        onPress={() => setShowCategoryModal(true)}
+      >
+        <Text style={styles.categoryTitle}>Category</Text>
+        <AntDesign name="caretdown" color={colours.primary} />
       </Pressable>
 
       <FormInput placeholder="Description" />
@@ -69,6 +74,18 @@ const styles = StyleSheet.create({
     borderRadius: 7,
   },
   buttonTitle: { color: colours.primary, marginTop: 5 },
+  categorySelector: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    width: "100%",
+    marginBottom: 15,
+    padding: 8,
+    borderWidth: 1,
+    borderColor: colours.inActive,
+    borderRadius: 5,
+  },
+  categoryTitle: { color: colours.primary },
 });
 
 export default NewListing;

@@ -49,8 +49,8 @@ const DatePicker: FC<Props> = ({ title, value, onChange }) => {
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
-    width: "100%",
     alignItems: "center",
+    width: "100%",
     marginBottom: 15,
     padding: isIOS ? 0 : 8,
     borderWidth: isIOS ? 0 : 1,
