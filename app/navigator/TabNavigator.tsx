@@ -8,6 +8,7 @@ import AppNavigator from "./AppNavigator";
 import ProfileNavigator from "./ProfileNavigator";
 import { AntDesign } from "@expo/vector-icons";
 import { Entypo } from "@expo/vector-icons";
+import NewListing from "@views/NewListing";
 
 export type AuthStackParamList = {
   SignIn: undefined;
@@ -34,6 +35,11 @@ const TabNavigator: FC<Props> = (props) => {
         name="HomeNavigator"
         component={AppNavigator}
         options={getOptions("home")}
+      ></Tab.Screen>
+      <Tab.Screen
+        name="NewListing"
+        component={NewListing}
+        options={getOptions("pluscircleo")}
       ></Tab.Screen>
       <Tab.Screen
         name="ProfileNavigator"
