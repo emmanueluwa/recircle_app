@@ -3,6 +3,7 @@ import { FC } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
 import colours from "@utils/colours";
+import DatePicker from "@ui/DatePicker";
 
 interface Props {}
 
@@ -17,6 +18,11 @@ const NewListing: FC<Props> = ({}) => {
       </Pressable>
       <FormInput placeholder="Product name" />
       <FormInput placeholder="Price" />
+      <DatePicker
+        title="Date purchased: "
+        value={new Date()}
+        onChange={() => {}}
+      />
       <FormInput placeholder="Description" />
     </View>
   );
@@ -30,6 +36,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     alignItems: "center",
     justifyContent: "center",
+    alignSelf: "flex-start",
   },
 
   iconContainer: {
@@ -41,7 +48,7 @@ const styles = StyleSheet.create({
     borderColor: colours.primary,
     borderRadius: 7,
   },
-  buttonTitle: { color: colours.primary },
+  buttonTitle: { color: colours.primary, marginTop: 5 },
 });
 
 export default NewListing;
