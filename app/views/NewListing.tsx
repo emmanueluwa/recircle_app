@@ -1,13 +1,17 @@
 import FormInput from "@ui/FormInput";
-import { FC } from "react";
+import { FC, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
 import colours from "@utils/colours";
 import DatePicker from "@ui/DatePicker";
+import OptionsModal from "@components/OptionsModal";
+import categories from "@utils/categories";
+import CategoryOption from "@ui/CategoryOption";
 
 interface Props {}
 
 const NewListing: FC<Props> = ({}) => {
+  const [showCategoryModal, setShowCategoryModal] = useState(false);
   return (
     <View style={styles.container}>
       <Pressable style={styles.fileSelector}>
@@ -23,7 +27,23 @@ const NewListing: FC<Props> = ({}) => {
         value={new Date()}
         onChange={() => {}}
       />
+      <Pressable onPress={() => setShowCategoryModal(true)}>
+        <Text>Category</Text>
+      </Pressable>
+
       <FormInput placeholder="Description" />
+
+      <OptionsModal
+        visible={showCategoryModal}
+        onRequestClose={setShowCategoryModal}
+        options={categories}
+        renderItem={(item) => {
+          return <CategoryOption {...item} />;
+        }}
+        onPress={(item) => {
+          console.log(item.name);
+        }}
+      />
     </View>
   );
 };

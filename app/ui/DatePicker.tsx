@@ -2,6 +2,7 @@ import colours from "@utils/colours";
 import { FC, useState } from "react";
 import { Platform, Pressable, StyleSheet, Text, View } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { formatDate } from "@utils/date";
 
 interface Props {
   title: string;
@@ -24,7 +25,11 @@ const DatePicker: FC<Props> = ({ title, value, onChange }) => {
     <Pressable onPress={onPress} style={styles.container}>
       <Text style={styles.title}>{title}</Text>
 
-      {!isIOS && <Text style={styles.value}>{value.toISOString()}</Text>}
+      {!isIOS && (
+        <Text style={styles.value}>
+          {formatDate(value.toISOString(), "dd LLL yyyy")}
+        </Text>
+      )}
 
       {visible ? (
         <DateTimePicker
@@ -32,6 +37,8 @@ const DatePicker: FC<Props> = ({ title, value, onChange }) => {
           testID="dateTimePicker"
           onChange={(_, date) => {
             if (date) onChange(date);
+
+            if (!isIOS) setShowPicker(false);
           }}
         />
       ) : null}
@@ -45,6 +52,10 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
     marginBottom: 15,
+    padding: isIOS ? 0 : 8,
+    borderWidth: isIOS ? 0 : 1,
+    borderColor: colours.inActive,
+    borderRadius: 5,
   },
   title: { color: colours.primary },
   value: { color: colours.primary, paddingRight: 10 },
