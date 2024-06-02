@@ -13,6 +13,7 @@ import LoadingSpinner from "@ui/LoadingSpinner";
 import useAuth from "app/hooks/useAuth";
 import TabNavigator from "./TabNavigator";
 import useClient from "app/hooks/useClient";
+import asyncStorage, { Keys } from "@utils/asyncStorage";
 
 const Stack = createNativeStackNavigator();
 
@@ -30,7 +31,7 @@ const Navigator: FC<Props> = (props) => {
   const { authClient } = useClient();
 
   const fetchAuthState = async () => {
-    const token = await AsyncStorage.getItem("access-token");
+    const token = await asyncStorage.get(Keys.AUTH_TOKEN);
 
     if (token) {
       dispatch(updateAuthState({ pending: true, profile: null }));

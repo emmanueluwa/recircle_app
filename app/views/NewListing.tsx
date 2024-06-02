@@ -13,8 +13,28 @@ import CustomKeyAvoidingView from "@ui/CustomKeyAvoidingView";
 
 interface Props {}
 
+const defaultInfo = {
+  name: "",
+  description: "",
+  category: "",
+  price: "",
+  purchasingDate: new Date(),
+};
+
 const NewListing: FC<Props> = ({}) => {
+  const [productInfo, setProductInfo] = useState({ ...defaultInfo });
   const [showCategoryModal, setShowCategoryModal] = useState(false);
+
+  const { category, description, name, price, purchasingDate } = productInfo;
+
+  const handleChange = (name: string) => (text: string) => {
+    setProductInfo({ ...productInfo, [name]: text });
+  };
+
+  const handleSubmit = () => {
+    console.log(productInfo);
+  };
+
   return (
     <CustomKeyAvoidingView>
       <View style={styles.container}>
@@ -24,24 +44,41 @@ const NewListing: FC<Props> = ({}) => {
           </View>
           <Text style={styles.buttonTitle}>Add Images</Text>
         </Pressable>
-        <FormInput placeholder="Product name" />
-        <FormInput placeholder="Price" />
+        <FormInput
+          value={name}
+          placeholder="Product name"
+          onChangeText={handleChange("name")}
+        />
+        <FormInput
+          value={price}
+          placeholder="Price"
+          onChangeText={handleChange("price")}
+          keyboardType="numeric"
+        />
         <DatePicker
           title="Date purchased: "
-          value={new Date()}
-          onChange={() => {}}
+          value={purchasingDate}
+          onChange={(date) =>
+            setProductInfo({ ...productInfo, purchasingDate })
+          }
         />
         <Pressable
           style={styles.categorySelector}
           onPress={() => setShowCategoryModal(true)}
         >
-          <Text style={styles.categoryTitle}>Category</Text>
+          <Text style={styles.categoryTitle}>{category || "Category"}</Text>
           <AntDesign name="caretdown" color={colours.primary} />
         </Pressable>
 
-        <FormInput placeholder="Description" multiline numberOfLines={4} />
+        <FormInput
+          value={description}
+          placeholder="Description"
+          multiline
+          numberOfLines={4}
+          onChangeText={handleChange("description")}
+        />
 
-        <AppButton title="List Product" />
+        <AppButton title="List Product" onPress={handleSubmit} />
 
         <OptionsModal
           visible={showCategoryModal}
@@ -50,9 +87,9 @@ const NewListing: FC<Props> = ({}) => {
           renderItem={(item) => {
             return <CategoryOption {...item} />;
           }}
-          onPress={(item) => {
-            console.log(item.name);
-          }}
+          onPress={(item) =>
+            setProductInfo({ ...productInfo, category: item.name })
+          }
         />
       </View>
     </CustomKeyAvoidingView>
