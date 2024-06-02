@@ -12,6 +12,7 @@ import { runAxiosAsync } from "app/api/runAxiosAsync";
 import LoadingSpinner from "@ui/LoadingSpinner";
 import useAuth from "app/hooks/useAuth";
 import TabNavigator from "./TabNavigator";
+import useClient from "app/hooks/useClient";
 
 const Stack = createNativeStackNavigator();
 
@@ -26,6 +27,7 @@ const Navigator: FC<Props> = (props) => {
   const dispatch = useDispatch();
 
   const { loggedIn, authState } = useAuth();
+  const { authClient } = useClient();
 
   const fetchAuthState = async () => {
     const token = await AsyncStorage.getItem("access-token");
@@ -34,7 +36,7 @@ const Navigator: FC<Props> = (props) => {
       dispatch(updateAuthState({ pending: true, profile: null }));
 
       const res = await runAxiosAsync<{ profile: Profile }>(
-        client.get("/auth/profile", {
+        authClient.get("/auth/profile", {
           headers: {
             Authorization: "Bearer " + token,
           },
