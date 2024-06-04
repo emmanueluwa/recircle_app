@@ -9,18 +9,23 @@ import {
   View,
 } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
-import colours from "@utils/colours";
-import DatePicker from "@ui/DatePicker";
-import OptionsModal from "@components/OptionsModal";
-import categories from "@utils/categories";
 import CategoryOption from "@ui/CategoryOption";
 import { AntDesign } from "@expo/vector-icons";
 import AppButton from "@ui/AppButton";
 import CustomKeyAvoidingView from "@ui/CustomKeyAvoidingView";
 import * as ImagePicker from "expo-image-picker";
 import { showMessage } from "react-native-flash-message";
-import HorizontalImageList from "@components/HorizontalImageList";
+import mime from "mime";
+
 import { newProductSchema, yupValidate } from "@utils/validator";
+import HorizontalImageList from "@components/HorizontalImageList";
+import colours from "@utils/colours";
+import DatePicker from "@ui/DatePicker";
+import OptionsModal from "@components/OptionsModal";
+import categories from "@utils/categories";
+import useClient from "app/hooks/useClient";
+import { runAxiosAsync } from "app/api/runAxiosAsync";
+import LoadingSpinner from "@ui/LoadingSpinner";
 
 interface Props {}
 
@@ -42,6 +47,10 @@ const NewListing: FC<Props> = ({}) => {
   const [showImageOptions, setShowImageOptions] = useState(false);
   const [selectedImage, setSelectedImage] = useState("");
 
+  const [busy, setBusy] = useState(false);
+
+  const { authClient } = useClient();
+
   const { category, description, name, price, purchasingDate } = productInfo;
 
   const handleChange = (name: string) => (text: string) => {
@@ -53,6 +62,48 @@ const NewListing: FC<Props> = ({}) => {
     if (error) return showMessage({ message: error, type: "danger" });
 
     // submit form
+    type productInfoKeys = keyof typeof productInfo;
+
+    setBusy(true);
+
+    const formData = new FormData();
+    for (let key in productInfo) {
+      const value = productInfo[key as productInfoKeys];
+
+      if (value instanceof Date) {
+        formData.append(key, value.toISOString());
+      } else {
+        formData.append(key, value);
+      }
+    }
+
+    // adding images
+    const newImages = images.map((img, index) => ({
+      name: "name_" + index,
+      type: mime.getType(img),
+      uri: img,
+    }));
+
+    for (let img of newImages) {
+      formData.append("images", img as any);
+    }
+
+    const res = await runAxiosAsync<{ message: string }>(
+      authClient.post("/product/list", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      })
+    );
+
+    setBusy(false);
+
+    if (res) {
+      showMessage({ message: res.message, type: "success" });
+      //clear form
+      setProductInfo({ ...defaultInfo });
+      setImages([]);
+    }
+
+    console.log(res);
   };
 
   const handleOnImageSelection = async () => {
@@ -161,6 +212,7 @@ const NewListing: FC<Props> = ({}) => {
           }}
         />
       </View>
+      <LoadingSpinner visible={busy} />
     </CustomKeyAvoidingView>
   );
 };
