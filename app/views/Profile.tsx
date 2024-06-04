@@ -1,11 +1,12 @@
 import { FC, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { AuthStackParamList } from "app/navigator/AuthNavigator";
 import { signInSchema, yupValidate } from "@utils/validator";
 import { showMessage } from "react-native-flash-message";
 import { runAxiosAsync } from "app/api/runAxiosAsync";
 import client from "app/api/client";
+import AvatarView from "@ui/AvatarView";
 
 interface Props {}
 
@@ -55,21 +56,16 @@ const Profile: FC<Props> = (props) => {
 
   const { email, password } = userInfo;
   return (
-    <View>
-      <Text>Home</Text>
-    </View>
+    <ScrollView contentContainerStyle={styles.container}>
+      {/* Profile image and profile info */}
+      <AvatarView size={80} />
+      {/* options for profile */}
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  innerContainer: {
-    padding: 15,
-    flex: 1,
-  },
-
-  formContainer: { marginTop: 30 },
 });
 
 export default Profile;
-Profile;
