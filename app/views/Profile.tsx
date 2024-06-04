@@ -5,6 +5,7 @@ import useAuth from "app/hooks/useAuth";
 import colours from "@utils/colours";
 import size from "@utils/size";
 import FormDivider from "./FormDivider";
+import ProfileOptionListItem from "@components/ProfileOptionListItem";
 
 interface Props {}
 
@@ -27,6 +28,18 @@ const Profile: FC<Props> = (props) => {
       <FormDivider />
 
       {/* options for profile */}
+      <ProfileOptionListItem
+        style={styles.marginBottom}
+        antIconName="message1"
+        title="Messages"
+        active
+      />
+      <ProfileOptionListItem
+        style={styles.marginBottom}
+        antIconName="appstore-o"
+        title="Your Listings"
+      />
+      <ProfileOptionListItem antIconName="logout" title="Log out" />
     </ScrollView>
   );
 };
@@ -37,6 +50,9 @@ const styles = StyleSheet.create({
   profileInfo: { flex: 1, paddingLeft: size.padding },
   name: { color: colours.primary, fontSize: 20, fontWeight: "bold" },
   email: { color: colours.primary, paddingTop: 2 },
+  marginBottom: {
+    marginBottom: 15,
+  },
 });
 
 export default Profile;
