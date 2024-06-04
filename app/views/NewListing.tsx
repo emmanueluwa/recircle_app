@@ -31,10 +31,15 @@ const defaultInfo = {
   purchasingDate: new Date(),
 };
 
+const imageOptions = [{ value: "Remove Image", id: "remove" }];
+
 const NewListing: FC<Props> = ({}) => {
   const [productInfo, setProductInfo] = useState({ ...defaultInfo });
   const [showCategoryModal, setShowCategoryModal] = useState(false);
+
   const [images, setImages] = useState<string[]>([]);
+  const [showImageOptions, setShowImageOptions] = useState(false);
+  const [selectedImage, setSelectedImage] = useState("");
 
   const { category, description, name, price, purchasingDate } = productInfo;
 
@@ -82,21 +87,10 @@ const NewListing: FC<Props> = ({}) => {
           <HorizontalImageList
             images={images}
             onLongPress={(img) => {
-              console.log(img);
+              setSelectedImage(img);
+              setShowImageOptions(true);
             }}
           />
-
-          {/* <FlatList
-            data={images}
-            renderItem={({ item }) => {
-              return (
-                <Image style={styles.selectedImage} source={{ uri: item }} />
-              );
-            }}
-            keyExtractor={(item) => item}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-          /> */}
         </View>
 
         <FormInput
@@ -146,6 +140,22 @@ const NewListing: FC<Props> = ({}) => {
             setProductInfo({ ...productInfo, category: item.name })
           }
         />
+
+        {/* image options */}
+        <OptionsModal
+          visible={showImageOptions}
+          onRequestClose={setShowImageOptions}
+          options={imageOptions}
+          renderItem={(item) => {
+            return <Text style={styles.imageOptions}>{item.value}</Text>;
+          }}
+          onPress={(option) => {
+            if (option.id === "remove") {
+              const newImages = images.filter((img) => img !== selectedImage);
+              setImages([...newImages]);
+            }
+          }}
+        />
       </View>
     </CustomKeyAvoidingView>
   );
@@ -192,6 +202,12 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   categoryTitle: { color: colours.primary },
+  imageOptions: {
+    fontWeight: "600",
+    fontSize: 18,
+    color: colours.primary,
+    padding: 10,
+  },
 });
 
 export default NewListing;
