@@ -20,6 +20,7 @@ import CustomKeyAvoidingView from "@ui/CustomKeyAvoidingView";
 import * as ImagePicker from "expo-image-picker";
 import { showMessage } from "react-native-flash-message";
 import HorizontalImageList from "@components/HorizontalImageList";
+import { newProductSchema, yupValidate } from "@utils/validator";
 
 interface Props {}
 
@@ -47,8 +48,11 @@ const NewListing: FC<Props> = ({}) => {
     setProductInfo({ ...productInfo, [name]: text });
   };
 
-  const handleSubmit = () => {
-    console.log(productInfo);
+  const handleSubmit = async () => {
+    const { error } = await yupValidate(newProductSchema, productInfo);
+    if (error) return showMessage({ message: error, type: "danger" });
+
+    // submit form
   };
 
   const handleOnImageSelection = async () => {
