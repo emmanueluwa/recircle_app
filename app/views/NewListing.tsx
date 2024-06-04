@@ -1,6 +1,13 @@
 import FormInput from "@ui/FormInput";
 import { FC, useState } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import {
+  FlatList,
+  Image,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
 import colours from "@utils/colours";
 import DatePicker from "@ui/DatePicker";
@@ -12,6 +19,7 @@ import AppButton from "@ui/AppButton";
 import CustomKeyAvoidingView from "@ui/CustomKeyAvoidingView";
 import * as ImagePicker from "expo-image-picker";
 import { showMessage } from "react-native-flash-message";
+import HorizontalImageList from "@components/HorizontalImageList";
 
 interface Props {}
 
@@ -60,12 +68,37 @@ const NewListing: FC<Props> = ({}) => {
   return (
     <CustomKeyAvoidingView>
       <View style={styles.container}>
-        <Pressable onPress={handleOnImageSelection} style={styles.fileSelector}>
-          <View style={styles.iconContainer}>
-            <FontAwesome5 name="images" size={24} color="black" />
-          </View>
-          <Text style={styles.buttonTitle}>Add Images</Text>
-        </Pressable>
+        <View style={styles.imageContainer}>
+          <Pressable
+            onPress={handleOnImageSelection}
+            style={styles.fileSelector}
+          >
+            <View style={styles.iconContainer}>
+              <FontAwesome5 name="images" size={24} color="black" />
+            </View>
+            <Text style={styles.buttonTitle}>Add Images</Text>
+          </Pressable>
+
+          <HorizontalImageList
+            images={images}
+            onLongPress={(img) => {
+              console.log(img);
+            }}
+          />
+
+          {/* <FlatList
+            data={images}
+            renderItem={({ item }) => {
+              return (
+                <Image style={styles.selectedImage} source={{ uri: item }} />
+              );
+            }}
+            keyExtractor={(item) => item}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+          /> */}
+        </View>
+
         <FormInput
           value={name}
           placeholder="Product name"
@@ -123,6 +156,7 @@ const styles = StyleSheet.create({
     padding: 15,
     flex: 1,
   },
+  imageContainer: { flexDirection: "row" },
   fileSelector: {
     marginBottom: 15,
     alignItems: "center",
@@ -138,6 +172,12 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: colours.primary,
     borderRadius: 7,
+  },
+  selectedImage: {
+    width: 70,
+    height: 70,
+    borderRadius: 7,
+    marginLeft: 5,
   },
   buttonTitle: { color: colours.primary, marginTop: 5 },
   categorySelector: {
