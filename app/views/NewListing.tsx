@@ -10,6 +10,8 @@ import CategoryOption from "@ui/CategoryOption";
 import { AntDesign } from "@expo/vector-icons";
 import AppButton from "@ui/AppButton";
 import CustomKeyAvoidingView from "@ui/CustomKeyAvoidingView";
+import * as ImagePicker from "expo-image-picker";
+import { showMessage } from "react-native-flash-message";
 
 interface Props {}
 
@@ -24,6 +26,7 @@ const defaultInfo = {
 const NewListing: FC<Props> = ({}) => {
   const [productInfo, setProductInfo] = useState({ ...defaultInfo });
   const [showCategoryModal, setShowCategoryModal] = useState(false);
+  const [images, setImages] = useState<string[]>([]);
 
   const { category, description, name, price, purchasingDate } = productInfo;
 
@@ -35,10 +38,29 @@ const NewListing: FC<Props> = ({}) => {
     console.log(productInfo);
   };
 
+  const handleOnImageSelection = async () => {
+    try {
+      const { assets } = await ImagePicker.launchImageLibraryAsync({
+        allowsEditing: false,
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        //limit file size
+        quality: 0.3,
+        allowsMultipleSelection: true,
+      });
+
+      if (!assets) return;
+
+      const imageUris = assets.map(({ uri }) => uri);
+      setImages([...images, ...imageUris]);
+    } catch (error) {
+      showMessage({ message: (error as any).message, type: "danger" });
+    }
+  };
+
   return (
     <CustomKeyAvoidingView>
       <View style={styles.container}>
-        <Pressable style={styles.fileSelector}>
+        <Pressable onPress={handleOnImageSelection} style={styles.fileSelector}>
           <View style={styles.iconContainer}>
             <FontAwesome5 name="images" size={24} color="black" />
           </View>
