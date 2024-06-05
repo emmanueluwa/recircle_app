@@ -2,6 +2,8 @@ import { FC } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Profile from "@views/Profile";
+import AppHeader from "@components/AppHeader";
+import BackButton from "@ui/BackButton";
 
 const Stack = createNativeStackNavigator();
 
@@ -10,7 +12,7 @@ interface Props {}
 const Listings: FC<Props> = (props) => {
   return (
     <View>
-      <Text>allahu akbar</Text>
+      <AppHeader backButton={<BackButton />} />
     </View>
   );
 };
