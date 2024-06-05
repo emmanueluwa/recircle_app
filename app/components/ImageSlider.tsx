@@ -2,8 +2,15 @@ import { useNavigation } from "@react-navigation/native";
 import ProductImage from "@ui/ProductImage";
 import colours from "@utils/colours";
 import size from "@utils/size";
-import { FC, useState } from "react";
-import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
+import { FC, useRef, useState } from "react";
+import {
+  FlatList,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+  ViewToken,
+} from "react-native";
 
 interface Props {
   images?: string[];
@@ -11,6 +18,14 @@ interface Props {
 
 const ImageSlider: FC<Props> = ({ images }) => {
   const [activeIndex, setActiveIndex] = useState(0);
+  const viewableConfig = useRef({ itemVisiblePercentThreshold: 50 });
+
+  const onViewableItemsChanged = useRef(
+    (info: { viewableItems: ViewToken[]; changed: ViewToken[] }) => {
+      setActiveIndex(info.viewableItems[0].index || 0);
+    }
+  );
+
   return (
     <View style={styles.container}>
       <FlatList
@@ -20,6 +35,8 @@ const ImageSlider: FC<Props> = ({ images }) => {
         horizontal
         showsHorizontalScrollIndicator={false}
         pagingEnabled
+        viewabilityConfig={viewableConfig.current}
+        onViewableItemsChanged={onViewableItemsChanged.current}
       />
       <View style={styles.indicator}>
         <Text style={styles.indicatorText}>
