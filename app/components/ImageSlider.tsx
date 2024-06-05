@@ -26,6 +26,8 @@ const ImageSlider: FC<Props> = ({ images }) => {
     }
   );
 
+  if (!images?.length) return null;
+
   return (
     <View style={styles.container}>
       <FlatList
