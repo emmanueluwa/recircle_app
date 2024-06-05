@@ -14,7 +14,7 @@ export type Product = {
   category: string;
   price: number;
   image?: string[];
-  date: Date;
+  date: string;
   description: string;
   seller: {
     id: string;
@@ -31,8 +31,8 @@ const DetailProduct: FC<Props> = ({ route }) => {
   return (
     <>
       <AppHeader backButton={<BackButton />} />
-      <View style={[styles.container]}>
-        <SingleProduct />
+      <View style={styles.container}>
+        {product ? <SingleProduct product={product} /> : <></>}
       </View>
     </>
   );
@@ -40,8 +40,7 @@ const DetailProduct: FC<Props> = ({ route }) => {
 
 const styles = StyleSheet.create({
   container: {
-    alignSelf: "center",
-    marginVertical: 30,
+    flex: 1,
   },
 });
 
