@@ -8,32 +8,21 @@ import useClient from "app/hooks/useClient";
 import { runAxiosAsync } from "app/api/runAxiosAsync";
 import size from "@utils/size";
 import ProductImage from "@ui/ProductImage";
+import { Product } from "./DetailProduct";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
+import { ProfileNavigatorParamList } from "app/navigator/ProfileNavigator";
 
 const Stack = createNativeStackNavigator();
 
 interface Props {}
-
-type Product = {
-  id: string;
-  name: string;
-  thumbnail?: string;
-  category: string;
-  price: number;
-  image?: string[];
-  date: Date;
-  description: string;
-  seller: {
-    id: string;
-    name: string;
-    avatar?: string;
-  };
-};
 
 type ListingResponse = {
   products: Product[];
 };
 
 const Listings: FC<Props> = (props) => {
+  const { navigate } =
+    useNavigation<NavigationProp<ProfileNavigatorParamList>>();
   const [listings, setListings] = useState<Product[]>([]);
   const { authClient } = useClient();
 
@@ -61,7 +50,10 @@ const Listings: FC<Props> = (props) => {
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => {
             return (
-              <Pressable style={styles.listItem}>
+              <Pressable
+                onPress={() => navigate("DetailProduct", { product: item })}
+                style={styles.listItem}
+              >
                 <ProductImage uri={item.thumbnail} />
                 <Text style={styles.productName} numberOfLines={2}>
                   {item.name}

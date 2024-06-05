@@ -2,7 +2,7 @@ import { useNavigation } from "@react-navigation/native";
 import colours from "@utils/colours";
 import size from "@utils/size";
 import { FC, useState } from "react";
-import { Pressable, StyleSheet, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 
 interface Props {
   backButton?: JSX.Element | null;
@@ -10,16 +10,11 @@ interface Props {
   right?: JSX.Element | null;
 }
 
-const AppHeader: FC<Props> = ({ backButton, center, right }) => {
+const SingleProduct: FC<Props> = ({ backButton, center, right }) => {
   const { goBack, canGoBack } = useNavigation();
   return (
-    <View style={styles.container}>
-      {/* back button */}
-      {canGoBack() && <Pressable onPress={goBack}>{backButton}</Pressable>}
-      {/* center ui  */}
-      {center}
-      {/* right ui */}
-      {right}
+    <View>
+      <Text>single</Text>
     </View>
   );
 };
@@ -33,4 +28,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AppHeader;
+export default SingleProduct;
