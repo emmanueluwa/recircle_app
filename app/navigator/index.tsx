@@ -22,6 +22,16 @@ const MyTheme = {
   colors: { ...DefaultTheme.colors, background: colours.white },
 };
 
+type ProfileRes = {
+  profile: {
+    id: string;
+    email: string;
+    name: string;
+    verified: boolean;
+    avatar?: string;
+  };
+};
+
 interface Props {}
 
 const Navigator: FC<Props> = (props) => {
@@ -36,7 +46,7 @@ const Navigator: FC<Props> = (props) => {
     if (token) {
       dispatch(updateAuthState({ pending: true, profile: null }));
 
-      const res = await runAxiosAsync<{ profile: Profile }>(
+      const res = await runAxiosAsync<ProfileRes>(
         authClient.get("/auth/profile", {
           headers: {
             Authorization: "Bearer " + token,
@@ -45,7 +55,12 @@ const Navigator: FC<Props> = (props) => {
       );
 
       if (res) {
-        dispatch(updateAuthState({ pending: false, profile: res.profile }));
+        dispatch(
+          updateAuthState({
+            pending: false,
+            profile: { ...res.profile, accessToken: token },
+          })
+        );
       } else {
         dispatch(updateAuthState({ pending: false, profile: null }));
       }

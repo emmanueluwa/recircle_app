@@ -12,7 +12,7 @@ const remove = async (key: string) => {
   await AsyncStorage.removeItem(key);
 };
 
-const clear = async (key: string) => {
+const clear = async () => {
   await AsyncStorage.clear();
 };
 

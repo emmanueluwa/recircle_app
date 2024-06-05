@@ -15,7 +15,7 @@ const Profile: FC<Props> = (props) => {
   const { navigate } =
     useNavigation<NavigationProp<ProfileNavigatorParamList>>();
 
-  const { authState } = useAuth();
+  const { authState, signOut } = useAuth();
   const { profile } = authState;
 
   const onMessagePress = () => {
@@ -55,7 +55,11 @@ const Profile: FC<Props> = (props) => {
         onPress={onListingPress}
       />
 
-      <ProfileOptionListItem antIconName="logout" title="Log out" />
+      <ProfileOptionListItem
+        antIconName="logout"
+        title="Log out"
+        onPress={signOut}
+      />
     </ScrollView>
   );
 };
