@@ -30,6 +30,7 @@ import DatePicker from "@ui/DatePicker";
 import OptionSelector from "@ui/OptionSelector";
 import { selectImages } from "@utils/helper";
 import CategoryOptions from "@components/CategoryOptions";
+import AppButton from "@ui/AppButton";
 
 type Props = NativeStackScreenProps<ProfileNavigatorParamList, "EditProduct">;
 
@@ -81,6 +82,14 @@ const EditProduct: FC<Props> = ({ route }) => {
     setProduct({ ...product, image: [...images] });
   };
 
+  const makeSelectedImageThumbnail = async () => {
+    if (selectedImage.startsWith("https://res.cloudinary.com")) {
+      setProduct({ ...product, thumbnail: selectedImage });
+    }
+  };
+
+  const handleOnSubmit = () => {};
+
   return (
     <>
       <AppHeader backButton={<BackButton />} />
@@ -126,6 +135,7 @@ const EditProduct: FC<Props> = ({ route }) => {
               setProduct({ ...product, description })
             }
           />
+          <AppButton title="Update Product" onPress={handleOnSubmit} />
         </ScrollView>
       </View>
 
@@ -137,8 +147,7 @@ const EditProduct: FC<Props> = ({ route }) => {
           return <Text style={styles.option}>{option.value}</Text>;
         }}
         onPress={({ id }) => {
-          if (id == "thumb") {
-          }
+          if (id == "thumb") makeSelectedImageThumbnail();
           if (id == "remove") removeSelectedImage();
         }}
       />
