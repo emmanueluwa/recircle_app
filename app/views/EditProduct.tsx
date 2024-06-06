@@ -31,15 +31,35 @@ import OptionSelector from "@ui/OptionSelector";
 
 type Props = NativeStackScreenProps<ProfileNavigatorParamList, "EditProduct">;
 
+const imageOptions = [
+  { value: "Use as Thumbnail", id: "thumb" },
+  { value: "Remove Image", id: "remove" },
+];
+
 const EditProduct: FC<Props> = ({ route }) => {
   const { product } = route.params;
+
+  const [selectedImage, setSelectedImage] = useState("");
+  const [showImageOptions, setShowImageOptions] = useState(false);
+
+  const onLongPress = (image: string) => {
+    setSelectedImage(image);
+    setShowImageOptions(true);
+  };
+
+  const removeSelectedImage = () => {
+    console.log(selectedImage);
+  };
   return (
     <>
       <AppHeader backButton={<BackButton />} />
       <View style={styles.container}>
         <ScrollView>
           <Text style={styles.title}>Images</Text>
-          <HorizontalImageList images={product.image || []} />
+          <HorizontalImageList
+            images={product.image || []}
+            onLongPress={onLongPress}
+          />
 
           <Pressable style={styles.imageSelector}>
             <FontAwesome5 name="images" size={30} color={colours.primary} />
@@ -63,6 +83,20 @@ const EditProduct: FC<Props> = ({ route }) => {
           <FormInput placeholder="Description" value={product.description} />
         </ScrollView>
       </View>
+
+      <OptionsModal
+        options={imageOptions}
+        visible={showImageOptions}
+        onRequestClose={setShowImageOptions}
+        renderItem={(option) => {
+          return <Text style={styles.option}>{option.value}</Text>;
+        }}
+        onPress={({ id }) => {
+          if (id == "thumb") {
+          }
+          if (id == "remove") removeSelectedImage();
+        }}
+      />
     </>
   );
 };
@@ -86,6 +120,10 @@ const styles = StyleSheet.create({
     borderRadius: 7,
     borderColor: colours.primary,
     marginVertical: 10,
+  },
+  option: {
+    paddingVertical: 10,
+    color: colours.primary,
   },
 });
 
