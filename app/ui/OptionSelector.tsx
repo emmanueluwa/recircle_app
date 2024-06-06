@@ -34,12 +34,6 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   categoryTitle: { color: colours.primary },
-  imageOptions: {
-    fontWeight: "600",
-    fontSize: 18,
-    color: colours.primary,
-    padding: 10,
-  },
 });
 
 export default OptionSelector;

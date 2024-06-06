@@ -28,6 +28,7 @@ import HorizontalImageList from "@components/HorizontalImageList";
 import FormInput from "@ui/FormInput";
 import DatePicker from "@ui/DatePicker";
 import OptionSelector from "@ui/OptionSelector";
+import { selectImages } from "@utils/helper";
 
 type Props = NativeStackScreenProps<ProfileNavigatorParamList, "EditProduct">;
 
@@ -38,7 +39,12 @@ const imageOptions = [
 
 const EditProduct: FC<Props> = ({ route }) => {
   const { authClient } = useClient();
-  const { product } = route.params;
+
+  const [product, setProduct] = useState({
+    ...route.params.product,
+    price: route.params.product.price.toString(),
+    date: new Date(route.params.product.date),
+  });
 
   const [selectedImage, setSelectedImage] = useState("");
   const [showImageOptions, setShowImageOptions] = useState(false);
@@ -61,6 +67,14 @@ const EditProduct: FC<Props> = ({ route }) => {
       );
     }
   };
+
+  const handleOnImageSelect = async () => {
+    const newImages = await selectImages();
+    const oldImages = product.image || [];
+    const images = oldImages.concat(newImages);
+    setProduct({ ...product, image: [...images] });
+  };
+
   return (
     <>
       <AppHeader backButton={<BackButton />} />
@@ -72,26 +86,37 @@ const EditProduct: FC<Props> = ({ route }) => {
             onLongPress={onLongPress}
           />
 
-          <Pressable style={styles.imageSelector}>
+          <Pressable onPress={handleOnImageSelect} style={styles.imageSelector}>
             <FontAwesome5 name="images" size={30} color={colours.primary} />
           </Pressable>
 
-          <FormInput placeholder="Product name" value={product.name} />
+          <FormInput
+            placeholder="Product name"
+            value={product.name}
+            onChangeText={(name) => setProduct({ ...product, name })}
+          />
           <FormInput
             placeholder="Price"
             keyboardType="numeric"
             value={product.price.toString()}
+            onChangeText={(price) => setProduct({ ...product, price })}
           />
 
           <DatePicker
-            value={new Date(product.date)}
+            value={product.date}
             title="Purchasing Date: "
-            onChange={() => {}}
+            onChange={(date) => setProduct({ ...product, date })}
           />
 
           <OptionSelector title={product.category || "Category"} />
 
-          <FormInput placeholder="Description" value={product.description} />
+          <FormInput
+            placeholder="Description"
+            value={product.description}
+            onChangeText={(description) =>
+              setProduct({ ...product, description })
+            }
+          />
         </ScrollView>
       </View>
 

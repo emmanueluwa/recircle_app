@@ -27,6 +27,7 @@ import useClient from "app/hooks/useClient";
 import { runAxiosAsync } from "app/api/runAxiosAsync";
 import LoadingSpinner from "@ui/LoadingSpinner";
 import OptionSelector from "@ui/OptionSelector";
+import { selectImages } from "@utils/helper";
 
 interface Props {}
 
@@ -108,22 +109,8 @@ const NewListing: FC<Props> = ({}) => {
   };
 
   const handleOnImageSelection = async () => {
-    try {
-      const { assets } = await ImagePicker.launchImageLibraryAsync({
-        allowsEditing: false,
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        //limit file size
-        quality: 0.3,
-        allowsMultipleSelection: true,
-      });
-
-      if (!assets) return;
-
-      const imageUris = assets.map(({ uri }) => uri);
-      setImages([...images, ...imageUris]);
-    } catch (error) {
-      showMessage({ message: (error as any).message, type: "danger" });
-    }
+    const newImages = await selectImages();
+    setImages([...images, ...newImages]);
   };
 
   return (
@@ -245,6 +232,12 @@ const styles = StyleSheet.create({
     marginLeft: 5,
   },
   buttonTitle: { color: colours.primary, marginTop: 5 },
+  imageOptions: {
+    fontWeight: "600",
+    fontSize: 18,
+    color: colours.primary,
+    padding: 10,
+  },
 });
 
 export default NewListing;
