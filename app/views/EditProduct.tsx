@@ -37,6 +37,7 @@ const imageOptions = [
 ];
 
 const EditProduct: FC<Props> = ({ route }) => {
+  const { authClient } = useClient();
   const { product } = route.params;
 
   const [selectedImage, setSelectedImage] = useState("");
@@ -47,8 +48,18 @@ const EditProduct: FC<Props> = ({ route }) => {
     setShowImageOptions(true);
   };
 
-  const removeSelectedImage = () => {
-    console.log(selectedImage);
+  const removeSelectedImage = async () => {
+    const notLocalImage = selectedImage.startsWith(
+      "https://res.cloudinary.com"
+    );
+    if (notLocalImage) {
+      //https://res.cloudinary.com/dmihglkkd/image/upload/v1717605333/ygause54pinciwo75xgi.jpg
+      const splitItems = selectedImage.split("/");
+      const imageId = splitItems[splitItems.length - 1].split(".")[0];
+      await runAxiosAsync<{ message: string }>(
+        authClient.delete(`/product/image/${product.id}/${imageId}`)
+      );
+    }
   };
   return (
     <>
