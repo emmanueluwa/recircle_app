@@ -26,6 +26,7 @@ import categories from "@utils/categories";
 import useClient from "app/hooks/useClient";
 import { runAxiosAsync } from "app/api/runAxiosAsync";
 import LoadingSpinner from "@ui/LoadingSpinner";
+import OptionSelector from "@ui/OptionSelector";
 
 interface Props {}
 
@@ -166,13 +167,11 @@ const NewListing: FC<Props> = ({}) => {
             setProductInfo({ ...productInfo, purchasingDate })
           }
         />
-        <Pressable
-          style={styles.categorySelector}
+
+        <OptionSelector
           onPress={() => setShowCategoryModal(true)}
-        >
-          <Text style={styles.categoryTitle}>{category || "Category"}</Text>
-          <AntDesign name="caretdown" color={colours.primary} />
-        </Pressable>
+          title={category || "Category"}
+        />
 
         <FormInput
           value={description}
@@ -246,24 +245,6 @@ const styles = StyleSheet.create({
     marginLeft: 5,
   },
   buttonTitle: { color: colours.primary, marginTop: 5 },
-  categorySelector: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    width: "100%",
-    marginBottom: 15,
-    padding: 8,
-    borderWidth: 1,
-    borderColor: colours.inActive,
-    borderRadius: 5,
-  },
-  categoryTitle: { color: colours.primary },
-  imageOptions: {
-    fontWeight: "600",
-    fontSize: 18,
-    color: colours.primary,
-    padding: 10,
-  },
 });
 
 export default NewListing;

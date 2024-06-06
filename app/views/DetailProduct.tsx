@@ -1,13 +1,13 @@
 import AppHeader from "@components/AppHeader";
 import SingleProduct from "@components/SingleProduct";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { Feather } from "@expo/vector-icons";
+import { Feather, AntDesign } from "@expo/vector-icons";
 import BackButton from "@ui/BackButton";
 import colours from "@utils/colours";
 import useAuth from "app/hooks/useAuth";
 import { ProfileNavigatorParamList } from "app/navigator/ProfileNavigator";
 import { FC, useState } from "react";
-import { Alert, StyleSheet, Text, View } from "react-native";
+import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
 import OptionButton from "@ui/OptionButton";
 import OptionsModal from "@components/OptionsModal";
 import useClient from "app/hooks/useClient";
@@ -80,6 +80,13 @@ const DetailProduct: FC<Props> = ({ route, navigation }) => {
       />
       <View style={styles.container}>
         {product ? <SingleProduct product={product} /> : <></>}
+
+        <Pressable
+          onPress={() => navigation.navigate("ChatWindow")}
+          style={styles.messageButton}
+        >
+          <AntDesign name="message1" size={20} color={colours.white} />
+        </Pressable>
       </View>
       <OptionsModal
         options={menuOptions}
@@ -94,6 +101,9 @@ const DetailProduct: FC<Props> = ({ route, navigation }) => {
         onPress={(option) => {
           if (option.name === "Delete") {
             onDeletePress();
+          }
+          if (option.name === "Edit") {
+            navigation.navigate("EditProduct", { product: product! });
           }
         }}
       />
@@ -112,6 +122,17 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   optionTitle: { paddingLeft: 5, color: colours.primary },
+  messageButton: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: colours.active,
+    justifyContent: "center",
+    alignItems: "center",
+    position: "absolute",
+    bottom: 20,
+    right: 20,
+  },
 });
 
 export default DetailProduct;
