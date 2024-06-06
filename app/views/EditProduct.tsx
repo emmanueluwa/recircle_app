@@ -58,6 +58,11 @@ const EditProduct: FC<Props> = ({ route }) => {
     const notLocalImage = selectedImage.startsWith(
       "https://res.cloudinary.com"
     );
+
+    const images = product.image;
+    const newImages = images?.filter((img) => img !== selectedImage);
+    setProduct({ ...product, image: newImages });
+
     if (notLocalImage) {
       //https://res.cloudinary.com/dmihglkkd/image/upload/v1717605333/ygause54pinciwo75xgi.jpg
       const splitItems = selectedImage.split("/");
