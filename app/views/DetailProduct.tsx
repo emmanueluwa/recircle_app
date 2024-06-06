@@ -14,22 +14,8 @@ import useClient from "app/hooks/useClient";
 import { runAxiosAsync } from "app/api/runAxiosAsync";
 import { showMessage } from "react-native-flash-message";
 import LoadingSpinner from "@ui/LoadingSpinner";
-
-export type Product = {
-  id: string;
-  name: string;
-  thumbnail?: string;
-  category: string;
-  price: number;
-  image?: string[];
-  date: string;
-  description: string;
-  seller: {
-    id: string;
-    name: string;
-    avatar?: string;
-  };
-};
+import { useDispatch } from "react-redux";
+import { deleteItem } from "app/store/listings";
 
 type Props = NativeStackScreenProps<ProfileNavigatorParamList, "DetailProduct">;
 
@@ -49,6 +35,8 @@ const DetailProduct: FC<Props> = ({ route, navigation }) => {
   const { authClient } = useClient();
   const { product } = route.params;
 
+  const dispatch = useDispatch();
+
   const isAdmin = authState.profile?.id === product?.seller.id;
   const [busy, setBusy] = useState(false);
 
@@ -64,6 +52,8 @@ const DetailProduct: FC<Props> = ({ route, navigation }) => {
     );
     setBusy(false);
     if (res?.message) {
+      dispatch(deleteItem(id));
+
       showMessage({ message: res.message, type: "success" });
       navigation.navigate("Listings");
     }

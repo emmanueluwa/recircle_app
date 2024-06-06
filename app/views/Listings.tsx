@@ -11,6 +11,8 @@ import ProductImage from "@ui/ProductImage";
 import { Product } from "./DetailProduct";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { ProfileNavigatorParamList } from "app/navigator/ProfileNavigator";
+import { useDispatch, useSelector } from "react-redux";
+import { getListings, updateListings } from "app/store/listings";
 
 const Stack = createNativeStackNavigator();
 
@@ -26,7 +28,9 @@ const Listings: FC<Props> = (props) => {
 
   const { authClient } = useClient();
 
-  const [listings, setListings] = useState<Product[]>([]);
+  const dispatch = useDispatch();
+  const listings = useSelector(getListings);
+
   const [fetching, setFetching] = useState(false);
 
   const fetchListings = async () => {
@@ -36,7 +40,7 @@ const Listings: FC<Props> = (props) => {
     );
     setFetching(false);
     if (res) {
-      setListings(res.products);
+      dispatch(updateListings(res.products));
     }
   };
 

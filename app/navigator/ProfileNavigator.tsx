@@ -4,7 +4,8 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Profile from "@views/Profile";
 import Messages from "@views/Messages";
 import Listings from "@views/Listings";
-import DetailProduct, { Product } from "@views/DetailProduct";
+import DetailProduct from "@views/DetailProduct";
+import { Product } from "app/store/listings";
 
 export type ProfileNavigatorParamList = {
   Profile: undefined;
