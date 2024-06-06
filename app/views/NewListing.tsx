@@ -28,6 +28,7 @@ import { runAxiosAsync } from "app/api/runAxiosAsync";
 import LoadingSpinner from "@ui/LoadingSpinner";
 import OptionSelector from "@ui/OptionSelector";
 import { selectImages } from "@utils/helper";
+import CategoryOptions from "@components/CategoryOptions";
 
 interface Props {}
 
@@ -155,8 +156,8 @@ const NewListing: FC<Props> = ({}) => {
           }
         />
 
-        <OptionSelector
-          onPress={() => setShowCategoryModal(true)}
+        <CategoryOptions
+          onSelect={handleChange("category")}
           title={category || "Category"}
         />
 
@@ -169,18 +170,6 @@ const NewListing: FC<Props> = ({}) => {
         />
 
         <AppButton title="List Product" onPress={handleSubmit} />
-
-        <OptionsModal
-          visible={showCategoryModal}
-          onRequestClose={setShowCategoryModal}
-          options={categories}
-          renderItem={(item) => {
-            return <CategoryOption {...item} />;
-          }}
-          onPress={(item) =>
-            setProductInfo({ ...productInfo, category: item.name })
-          }
-        />
 
         {/* image options */}
         <OptionsModal

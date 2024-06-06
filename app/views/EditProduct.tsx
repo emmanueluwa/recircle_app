@@ -29,6 +29,7 @@ import FormInput from "@ui/FormInput";
 import DatePicker from "@ui/DatePicker";
 import OptionSelector from "@ui/OptionSelector";
 import { selectImages } from "@utils/helper";
+import CategoryOptions from "@components/CategoryOptions";
 
 type Props = NativeStackScreenProps<ProfileNavigatorParamList, "EditProduct">;
 
@@ -113,7 +114,10 @@ const EditProduct: FC<Props> = ({ route }) => {
             onChange={(date) => setProduct({ ...product, date })}
           />
 
-          <OptionSelector title={product.category || "Category"} />
+          <CategoryOptions
+            onSelect={(category) => setProduct({ ...product, category })}
+            title={product.category || "Category"}
+          />
 
           <FormInput
             placeholder="Description"
