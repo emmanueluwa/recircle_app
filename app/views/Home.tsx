@@ -18,6 +18,8 @@ import axios from "axios";
 import client from "app/api/client";
 import ChatNotification from "@ui/ChatNotification";
 import { AppStackParamList } from "app/navigator/AppNavigator";
+import SearchBar from "@components/SearchBar";
+import size from "@utils/size";
 
 interface Props {}
 
@@ -40,15 +42,15 @@ const Home: FC<Props> = (props) => {
   return (
     <>
       <ChatNotification onPress={() => navigate("Messages")} />
-      <View>
-        <Text>Home</Text>
+      <View style={styles.container}>
+        <SearchBar />
       </View>
     </>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
+  container: { flex: 1, padding: size.padding },
   innerContainer: {
     padding: 15,
     flex: 1,
