@@ -1,6 +1,7 @@
 import { FC, useState } from "react";
 import {
   Pressable,
+  RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
@@ -32,6 +33,8 @@ const Profile: FC<Props> = (props) => {
   const { authClient } = useClient();
   const { authState, signOut } = useAuth();
   const dispatch = useDispatch();
+  const [busy, setBusy] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   const { profile } = authState;
   const [userName, setUserName] = useState(profile?.name || "");
@@ -45,6 +48,18 @@ const Profile: FC<Props> = (props) => {
 
   const onListingPress = () => {
     navigate("Listings");
+  };
+
+  const getVerificationLink = async () => {
+    setBusy(true);
+    const res = await runAxiosAsync<{ message: string }>(
+      authClient.get("/auth/verify-token")
+    );
+
+    setBusy(false);
+    if (res) {
+      showMessage({ message: res.message, type: "success" });
+    }
   };
 
   const updateProfile = async () => {
@@ -63,8 +78,47 @@ const Profile: FC<Props> = (props) => {
     }
   };
 
+  const fetchProfile = async () => {
+    setRefreshing(true);
+
+    const res = await runAxiosAsync<{ profile: ProfileRes }>(
+      authClient.get("/auth/profile")
+    );
+    setRefreshing(false);
+
+    if (res) {
+      dispatch(
+        updateAuthState({
+          profile: { ...profile!, ...res.profile },
+          pending: false,
+        })
+      );
+    }
+  };
+
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={fetchProfile} />
+      }
+      contentContainerStyle={styles.container}
+    >
+      {!profile?.verified && (
+        <View style={styles.verificationLinkContainer}>
+          <Text style={styles.verificationTitle}>
+            Looks like you still need to verify your account.
+          </Text>
+          {busy ? (
+            <Text onPress={getVerificationLink} style={styles.verificationLink}>
+              Please wait...
+            </Text>
+          ) : (
+            <Text onPress={getVerificationLink} style={styles.verificationLink}>
+              Tap here for the verification link.
+            </Text>
+          )}
+        </View>
+      )}
       {/* Profile image and profile info */}
       <View style={styles.profileContainer}>
         <AvatarView uri={authState.profile?.avatar} size={80} />
@@ -117,15 +171,32 @@ const styles = StyleSheet.create({
   container: { padding: size.padding },
   profileContainer: { flexDirection: "row", alignItems: "center" },
   profileInfo: { flex: 1, paddingLeft: size.padding },
+  nameContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  verificationLinkContainer: {
+    paddingVertical: 10,
+    backgroundColor: colours.inActive,
+    marginVertical: 10,
+    borderRadius: 5,
+  },
+  verificationLink: {
+    fontWeight: "600",
+    color: colours.active,
+    textAlign: "center",
+    paddingTop: 5,
+  },
   name: { color: colours.primary, fontSize: 20, fontWeight: "bold" },
   email: { color: colours.primary, paddingTop: 2 },
   marginBottom: {
     marginBottom: 15,
   },
-  nameContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+  verificationTitle: {
+    fontWeight: "600",
+    color: colours.primary,
+    textAlign: "center",
   },
 });
 
