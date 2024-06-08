@@ -3,9 +3,11 @@ import { StyleSheet } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Home from "@views/Home";
 import Profile from "@views/Profile";
+import Messages from "@views/Messages";
 
 export type AppStackParamList = {
   Home: undefined;
+  Messages: undefined;
 };
 const Stack = createNativeStackNavigator<AppStackParamList>();
 
@@ -15,6 +17,7 @@ const AppNavigator: FC<Props> = (props) => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Home" component={Home} />
+      <Stack.Screen name="Messages" component={Messages} />
     </Stack.Navigator>
   );
 };

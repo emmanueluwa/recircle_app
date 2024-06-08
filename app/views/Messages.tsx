@@ -13,6 +13,7 @@ const Messages: FC<Props> = (props) => {
   return (
     <View>
       <AppHeader backButton={<BackButton />} />
+      <Text>Messages!</Text>
     </View>
   );
 };

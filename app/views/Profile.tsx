@@ -9,6 +9,7 @@ import {
   View,
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
+import mime from "mime";
 import AvatarView from "@ui/AvatarView";
 import useAuth from "app/hooks/useAuth";
 import colours from "@utils/colours";
@@ -23,6 +24,8 @@ import { ProfileRes } from "app/navigator";
 import { useDispatch } from "react-redux";
 import { updateAuthState } from "app/store/auth";
 import { showMessage } from "react-native-flash-message";
+import { selectImages } from "@utils/helper";
+import LoadingSpinner from "@ui/LoadingSpinner";
 
 interface Props {}
 
@@ -34,6 +37,7 @@ const Profile: FC<Props> = (props) => {
   const { authState, signOut } = useAuth();
   const dispatch = useDispatch();
   const [busy, setBusy] = useState(false);
+  const [updatingAvatar, setUpdatingAvatar] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
   const { profile } = authState;
@@ -48,6 +52,40 @@ const Profile: FC<Props> = (props) => {
 
   const onListingPress = () => {
     navigate("Listings");
+  };
+
+  const handleProfileImageSelection = async () => {
+    const [image] = await selectImages({
+      allowsMultipleSelection: false,
+      allowsEditing: true,
+      aspect: [1, 1],
+    });
+
+    if (image) {
+      const formData = new FormData();
+      formData.append("avatar", {
+        name: "Avatar",
+        uri: image,
+        type: mime.getType(image),
+      });
+
+      setUpdatingAvatar(true);
+      const res = await runAxiosAsync<ProfileRes>(
+        authClient.patch("/auth/update-avatar", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        })
+      );
+      setUpdatingAvatar(false);
+
+      if (res) {
+        dispatch(
+          updateAuthState({
+            profile: { ...profile!, ...res.profile },
+            pending: false,
+          })
+        );
+      }
+    }
   };
 
   const getVerificationLink = async () => {
@@ -121,7 +159,11 @@ const Profile: FC<Props> = (props) => {
       )}
       {/* Profile image and profile info */}
       <View style={styles.profileContainer}>
-        <AvatarView uri={authState.profile?.avatar} size={80} />
+        <AvatarView
+          uri={authState.profile?.avatar}
+          size={80}
+          onPress={handleProfileImageSelection}
+        />
 
         <View style={styles.profileInfo}>
           <View style={styles.nameContainer}>
@@ -163,6 +205,8 @@ const Profile: FC<Props> = (props) => {
         title="Log out"
         onPress={signOut}
       />
+
+      <LoadingSpinner visible={updatingAvatar} />
     </ScrollView>
   );
 };
