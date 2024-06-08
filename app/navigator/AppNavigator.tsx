@@ -4,10 +4,12 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Home from "@views/Home";
 import Profile from "@views/Profile";
 import Messages from "@views/Messages";
+import ProductList from "@views/ProductList";
 
 export type AppStackParamList = {
   Home: undefined;
   Messages: undefined;
+  ProductList: undefined;
 };
 const Stack = createNativeStackNavigator<AppStackParamList>();
 
@@ -18,6 +20,7 @@ const AppNavigator: FC<Props> = (props) => {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Home" component={Home} />
       <Stack.Screen name="Messages" component={Messages} />
+      <Stack.Screen name="ProductList" component={ProductList} />
     </Stack.Navigator>
   );
 };
