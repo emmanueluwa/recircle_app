@@ -15,6 +15,8 @@ import {
   Text,
   View,
 } from "react-native";
+import mime from "mime";
+import deepEqual from "deep-equal";
 import OptionButton from "@ui/OptionButton";
 import OptionsModal from "@components/OptionsModal";
 import useClient from "app/hooks/useClient";
@@ -31,8 +33,17 @@ import OptionSelector from "@ui/OptionSelector";
 import { selectImages } from "@utils/helper";
 import CategoryOptions from "@components/CategoryOptions";
 import AppButton from "@ui/AppButton";
+import { newProductSchema, yupValidate } from "@utils/validator";
 
 type Props = NativeStackScreenProps<ProfileNavigatorParamList, "EditProduct">;
+
+type ProductInfo = {
+  name: string;
+  description: string;
+  category: string;
+  price: string;
+  purchasingDate: Date;
+};
 
 const imageOptions = [
   { value: "Use as Thumbnail", id: "thumb" },
@@ -41,6 +52,7 @@ const imageOptions = [
 
 const EditProduct: FC<Props> = ({ route }) => {
   const { authClient } = useClient();
+  const [busy, setBusy] = useState(false);
 
   const [product, setProduct] = useState({
     ...route.params.product,
@@ -88,7 +100,58 @@ const EditProduct: FC<Props> = ({ route }) => {
     }
   };
 
-  const handleOnSubmit = () => {};
+  const handleOnSubmit = async () => {
+    const dataToUpdate: ProductInfo = {
+      name: product.name,
+      category: product.category,
+      description: product.description,
+      price: product.price,
+      purchasingDate: product.date,
+      thumbnail: product.thumbnail,
+    };
+
+    const { error } = await yupValidate(newProductSchema, dataToUpdate);
+    if (error) return showMessage({ message: error, type: "danger" });
+
+    //prepare new updated form
+    const formData = new FormData();
+
+    if (product.thumbnail) {
+      formData.append("thumbnail", product.thumbnail);
+    }
+
+    type productInfoKeys = keyof typeof dataToUpdate;
+
+    for (let key in dataToUpdate) {
+      const value = dataToUpdate[key as productInfoKeys];
+      if (value instanceof Date) formData.append(key, value.toISOString());
+      else formData.append(key, value);
+    }
+
+    product.image?.forEach((img, index) => {
+      if (!img.startsWith("https://res.cloudinary.com")) {
+        formData.append("images", {
+          uri: img,
+          name: "image_" + index,
+          type: mime.getType(img) || "image/jpg",
+        } as any);
+      }
+    });
+
+    //send data to api
+    setBusy(true);
+    const res = await runAxiosAsync<{ message: string }>(
+      authClient.patch("/product/" + product.id, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      })
+    );
+    console.log(formData);
+    setBusy(false);
+
+    if (res) {
+      showMessage({ message: res.message, type: "success" });
+    }
+  };
 
   return (
     <>
@@ -151,6 +214,7 @@ const EditProduct: FC<Props> = ({ route }) => {
           if (id == "remove") removeSelectedImage();
         }}
       />
+      <LoadingSpinner visible={busy} />
     </>
   );
 };
