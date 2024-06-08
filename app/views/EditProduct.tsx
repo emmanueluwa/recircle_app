@@ -51,17 +51,22 @@ const imageOptions = [
 ];
 
 const EditProduct: FC<Props> = ({ route }) => {
-  const { authClient } = useClient();
-  const [busy, setBusy] = useState(false);
-
-  const [product, setProduct] = useState({
+  const productInfoToUpdate = {
     ...route.params.product,
     price: route.params.product.price.toString(),
     date: new Date(route.params.product.date),
-  });
+  };
+
+  const { authClient } = useClient();
+  const [busy, setBusy] = useState(false);
+
+  const [product, setProduct] = useState({ ...productInfoToUpdate });
 
   const [selectedImage, setSelectedImage] = useState("");
   const [showImageOptions, setShowImageOptions] = useState(false);
+
+  //check if change is made to listing
+  const isFormChanged = deepEqual(productInfoToUpdate, product);
 
   const onLongPress = (image: string) => {
     setSelectedImage(image);
@@ -107,7 +112,6 @@ const EditProduct: FC<Props> = ({ route }) => {
       description: product.description,
       price: product.price,
       purchasingDate: product.date,
-      thumbnail: product.thumbnail,
     };
 
     const { error } = await yupValidate(newProductSchema, dataToUpdate);
@@ -198,7 +202,9 @@ const EditProduct: FC<Props> = ({ route }) => {
               setProduct({ ...product, description })
             }
           />
-          <AppButton title="Update Product" onPress={handleOnSubmit} />
+          {!isFormChanged && (
+            <AppButton title="Update Product" onPress={handleOnSubmit} />
+          )}
         </ScrollView>
       </View>
 
