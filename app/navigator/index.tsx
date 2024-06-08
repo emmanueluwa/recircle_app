@@ -22,7 +22,7 @@ const MyTheme = {
   colors: { ...DefaultTheme.colors, background: colours.white },
 };
 
-type ProfileRes = {
+export type ProfileRes = {
   profile: {
     id: string;
     email: string;
