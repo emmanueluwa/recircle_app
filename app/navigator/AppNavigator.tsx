@@ -11,7 +11,7 @@ import DetailProduct from "@views/DetailProduct";
 export type AppStackParamList = {
   Home: undefined;
   Messages: undefined;
-  ProductList: undefined;
+  ProductList: { category: string };
   DetailProduct: { product?: Product; id?: string };
 };
 const Stack = createNativeStackNavigator<AppStackParamList>();

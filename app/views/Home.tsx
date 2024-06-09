@@ -56,7 +56,9 @@ const Home: FC<Props> = (props) => {
       <ChatNotification onPress={() => navigate("Messages")} />
       <ScrollView style={styles.container}>
         <SearchBar />
-        <CategoryList onPress={() => navigate("ProductList")} />
+        <CategoryList
+          onPress={(category) => navigate("ProductList", { category })}
+        />
         <LatestProductList
           data={products}
           onPress={({ id }) => navigate("DetailProduct", { id })}
