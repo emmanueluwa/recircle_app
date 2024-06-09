@@ -13,7 +13,7 @@ export type ProfileNavigatorParamList = {
   Profile: undefined;
   Messages: undefined;
   Listings: undefined;
-  DetailProduct: { product?: Product };
+  DetailProduct: { product?: Product; id?: string };
   EditProduct: { product: Product };
   ChatWindow: undefined;
 };

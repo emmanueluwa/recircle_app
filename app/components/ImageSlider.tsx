@@ -1,16 +1,7 @@
-import { useNavigation } from "@react-navigation/native";
 import ProductImage from "@ui/ProductImage";
 import colours from "@utils/colours";
-import size from "@utils/size";
 import { FC, useRef, useState } from "react";
-import {
-  FlatList,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-  ViewToken,
-} from "react-native";
+import { FlatList, StyleSheet, Text, View, ViewToken } from "react-native";
 
 interface Props {
   images?: string[];

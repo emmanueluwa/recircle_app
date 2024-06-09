@@ -32,44 +32,6 @@ export interface SignInRes {
   };
 }
 
-const data = [
-  {
-    id: "1",
-    name: "Vintage Camera",
-    price: 99.99,
-    thumbnail:
-      "https://images.unsplash.com/photo-1519183071298-a2962d9da8b6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MXwyMDg2N3wwfDF8c2VhcmNofDJ8fGNhbWVyYXxlbnwwfHx8fA&ixlib=rb-1.2.1&q=80&w=400",
-  },
-  {
-    id: "2",
-    name: "Leather Backpack",
-    price: 79.99,
-    thumbnail:
-      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MXwyMDg2N3wwfDF8c2VhcmNofDF8fGJhY2twYWNrfGVufDB8fHx8&ixlib=rb-1.2.1&q=80&w=400",
-  },
-  {
-    id: "3",
-    name: "Running Shoes",
-    price: 59.99,
-    thumbnail:
-      "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MXwyMDg2N3wwfDF8c2VhcmNofDEwfHxydW5uaW5nJTIwc2hvZXN8ZW58MHx8fHw&ixlib=rb-1.2.1&q=80&w=400",
-  },
-  {
-    id: "4",
-    name: "Smart Watch",
-    price: 199.99,
-    thumbnail:
-      "https://images.unsplash.com/photo-1517430816045-df4b7de00dbb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MXwyMDg2N3wwfDF8c2VhcmNofDV8fHNtYXJ0JTIwd2F0Y2h8ZW58MHx8fHw&ixlib=rb-1.2.1&q=80&w=400",
-  },
-  {
-    id: "5",
-    name: "Wireless Headphones",
-    price: 149.99,
-    thumbnail:
-      "https://images.unsplash.com/photo-1519677100203-a0e668c92439?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MXwyMDg2N3wwfDF8c2VhcmNofDZ8fHdpcmVsZXNzJTIwaGVhZHBob25lc3xlbnwwfHx8fA&ixlib=rb-1.2.1&q=80&w=400",
-  },
-];
-
 const Home: FC<Props> = (props) => {
   const [products, setProducts] = useState<LatestProduct[]>([]);
   const { navigate } = useNavigation<NavigationProp<AppStackParamList>>();
@@ -95,7 +57,10 @@ const Home: FC<Props> = (props) => {
       <ScrollView style={styles.container}>
         <SearchBar />
         <CategoryList onPress={() => navigate("ProductList")} />
-        <LatestProductList data={products} />
+        <LatestProductList
+          data={products}
+          onPress={({ id }) => navigate("DetailProduct", { id })}
+        />
       </ScrollView>
     </>
   );

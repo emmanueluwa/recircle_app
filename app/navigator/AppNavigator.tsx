@@ -5,11 +5,14 @@ import Home from "@views/Home";
 import Profile from "@views/Profile";
 import Messages from "@views/Messages";
 import ProductList from "@views/ProductList";
+import { Product } from "app/store/listings";
+import DetailProduct from "@views/DetailProduct";
 
 export type AppStackParamList = {
   Home: undefined;
   Messages: undefined;
   ProductList: undefined;
+  DetailProduct: { product?: Product; id?: string };
 };
 const Stack = createNativeStackNavigator<AppStackParamList>();
 
@@ -21,6 +24,7 @@ const AppNavigator: FC<Props> = (props) => {
       <Stack.Screen name="Home" component={Home} />
       <Stack.Screen name="Messages" component={Messages} />
       <Stack.Screen name="ProductList" component={ProductList} />
+      <Stack.Screen name="DetailProduct" component={DetailProduct} />
     </Stack.Navigator>
   );
 };

@@ -12,7 +12,6 @@ interface Props {
 }
 
 const ProductGridView: FC<Props> = ({ data, onPress }) => {
-  console.log({ data });
   return (
     <GridView
       data={data}

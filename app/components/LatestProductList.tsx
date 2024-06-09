@@ -14,15 +14,14 @@ export type LatestProduct = {
 
 interface Props {
   data: LatestProduct[];
+  onPress(product: LatestProduct): void;
 }
 
-const LatestProductList: FC<Props> = ({ data }) => {
-  console.log({ data });
-  const onPressing = () => {};
+const LatestProductList: FC<Props> = ({ data, onPress }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Recently Listed Offers</Text>
-      <ProductGridView onPress={onPressing} data={data} />
+      <ProductGridView onPress={onPress} data={data} />
     </View>
   );
 };

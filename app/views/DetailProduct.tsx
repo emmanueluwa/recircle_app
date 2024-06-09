@@ -6,7 +6,7 @@ import BackButton from "@ui/BackButton";
 import colours from "@utils/colours";
 import useAuth from "app/hooks/useAuth";
 import { ProfileNavigatorParamList } from "app/navigator/ProfileNavigator";
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
 import OptionButton from "@ui/OptionButton";
 import OptionsModal from "@components/OptionsModal";
@@ -15,7 +15,7 @@ import { runAxiosAsync } from "app/api/runAxiosAsync";
 import { showMessage } from "react-native-flash-message";
 import LoadingSpinner from "@ui/LoadingSpinner";
 import { useDispatch } from "react-redux";
-import { deleteItem } from "app/store/listings";
+import { Product, deleteItem } from "app/store/listings";
 
 type Props = NativeStackScreenProps<ProfileNavigatorParamList, "DetailProduct">;
 
@@ -33,7 +33,8 @@ const menuOptions = [
 const DetailProduct: FC<Props> = ({ route, navigation }) => {
   const { authState } = useAuth();
   const { authClient } = useClient();
-  const { product } = route.params;
+  const { product, id } = route.params;
+  const [productInfo, setProductInfo] = useState<Product>();
 
   const dispatch = useDispatch();
 
@@ -70,6 +71,21 @@ const DetailProduct: FC<Props> = ({ route, navigation }) => {
     );
   };
 
+  const fetchProductInfo = async (id: string) => {
+    const res = await runAxiosAsync<{ product: Product }>(
+      authClient.get("/product/detail/" + id)
+    );
+    if (res) {
+      setProductInfo(res.product);
+    }
+  };
+
+  useEffect(() => {
+    if (id) fetchProductInfo(id);
+
+    if (product) setProductInfo(product);
+  }, [id, product]);
+
   return (
     <>
       <AppHeader
@@ -79,7 +95,7 @@ const DetailProduct: FC<Props> = ({ route, navigation }) => {
         }
       />
       <View style={styles.container}>
-        {product ? <SingleProduct product={product} /> : <></>}
+        {productInfo ? <SingleProduct product={productInfo} /> : <></>}
 
         <Pressable
           onPress={() => navigation.navigate("ChatWindow")}
