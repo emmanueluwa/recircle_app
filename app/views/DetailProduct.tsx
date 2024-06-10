@@ -80,6 +80,19 @@ const DetailProduct: FC<Props> = ({ route, navigation }) => {
     }
   };
 
+  const onChatButtonPress = async () => {
+    if (!productInfo) return;
+    const res = await runAxiosAsync<{ conversationId: string }>(
+      authClient.get("/conversation/with/" + productInfo.seller.id)
+    );
+    if (res) {
+      navigation.navigate("ChatWindow", {
+        conversationId: res.conversationId,
+        peerProfile: productInfo.seller,
+      });
+    }
+  };
+
   useEffect(() => {
     if (id) fetchProductInfo(id);
 
@@ -97,10 +110,7 @@ const DetailProduct: FC<Props> = ({ route, navigation }) => {
       <View style={styles.container}>
         {productInfo ? <SingleProduct product={productInfo} /> : <></>}
 
-        <Pressable
-          onPress={() => navigation.navigate("ChatWindow")}
-          style={styles.messageButton}
-        >
+        <Pressable onPress={onChatButtonPress} style={styles.messageButton}>
           <AntDesign name="message1" size={20} color={colours.white} />
         </Pressable>
       </View>

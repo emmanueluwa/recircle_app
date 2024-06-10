@@ -7,12 +7,17 @@ import Messages from "@views/Messages";
 import ProductList from "@views/ProductList";
 import { Product } from "app/store/listings";
 import DetailProduct from "@views/DetailProduct";
+import ChatWindow from "@views/ChatWindow";
 
 export type AppStackParamList = {
   Home: undefined;
   Messages: undefined;
   ProductList: { category: string };
   DetailProduct: { product?: Product; id?: string };
+  ChatWindow: {
+    conversationId?: string;
+    peerProfile: { id: string; name: string; avatar?: string };
+  };
 };
 const Stack = createNativeStackNavigator<AppStackParamList>();
 
@@ -25,6 +30,7 @@ const AppNavigator: FC<Props> = (props) => {
       <Stack.Screen name="Messages" component={Messages} />
       <Stack.Screen name="ProductList" component={ProductList} />
       <Stack.Screen name="DetailProduct" component={DetailProduct} />
+      <Stack.Screen name="ChatWindow" component={ChatWindow} />
     </Stack.Navigator>
   );
 };
