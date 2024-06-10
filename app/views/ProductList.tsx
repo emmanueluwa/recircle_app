@@ -1,6 +1,6 @@
 import colours from "@utils/colours";
 import { FC, useEffect, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { FlatList, StyleSheet, Text, View } from "react-native";
 import size from "@utils/size";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { AppStackParamList } from "app/navigator/AppNavigator";
@@ -11,14 +11,19 @@ import ProductGridView from "@components/ProductGridView";
 import AppHeader from "@components/AppHeader";
 import BackButton from "@ui/BackButton";
 import EmptyView from "@ui/EmptyView";
+import ProductCard from "@ui/ProductCard";
 
 type Props = NativeStackScreenProps<AppStackParamList, "ProductList">;
 
-const ProductList: FC<Props> = ({ route }) => {
+const column = 2;
+
+const ProductList: FC<Props> = ({ route, navigation }) => {
   const { authClient } = useClient();
   const { category } = route.params;
 
   const [products, setProducts] = useState<LatestProduct[]>([]);
+
+  const isOdd = products.length % column !== 0;
 
   const fetchProducts = async (category: string) => {
     const res = await runAxiosAsync<{ products: LatestProduct[] }>(
@@ -51,8 +56,23 @@ const ProductList: FC<Props> = ({ route }) => {
         backButton={<BackButton />}
         center={<Text style={styles.title}>{category}</Text>}
       />
-      <View></View>
-      <ProductGridView data={products} />
+
+      <FlatList
+        numColumns={column}
+        data={products}
+        renderItem={({ item, index }) => (
+          <View
+            style={{
+              flex: isOdd && index == products.length - 1 ? 1 / column : 1,
+            }}
+          >
+            <ProductCard
+              product={item}
+              onPress={({ id }) => navigation.navigate("DetailProduct", { id })}
+            />
+          </View>
+        )}
+      />
     </View>
   );
 };
