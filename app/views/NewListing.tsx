@@ -106,7 +106,6 @@ const NewListing: FC<Props> = ({}) => {
       setImages([]);
     }
 
-    console.log(res);
   };
 
   const handleOnImageSelection = async () => {

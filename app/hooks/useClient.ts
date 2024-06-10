@@ -9,7 +9,7 @@ import { getAuthState, updateAuthState } from "app/store/auth";
 
 const authClient = axios.create({ baseURL });
 
-type Response = { tokens: { refresh: string; access: string } };
+export type TokenResponse = { tokens: { refresh: string; access: string } };
 
 const useClient = () => {
   //token to send request
@@ -44,7 +44,7 @@ const useClient = () => {
       url: `${baseURL}/auth/refresh-token`,
     };
 
-    const res = await runAxiosAsync<Response>(axios(options));
+    const res = await runAxiosAsync<TokenResponse>(axios(options));
 
     if (res?.tokens) {
       failedRequest.response.config.headers.Authorization =

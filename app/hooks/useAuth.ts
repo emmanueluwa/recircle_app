@@ -39,7 +39,6 @@ const useAuth = () => {
 
     if (res) {
       //store tokens
-      console.log(res);
       await asyncStorage.save(Keys.AUTH_TOKEN, res.tokens.access);
       await asyncStorage.save(Keys.REFRESH_TOKEN, res.tokens.refresh);
 

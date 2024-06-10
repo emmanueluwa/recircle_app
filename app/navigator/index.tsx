@@ -71,7 +71,6 @@ const Navigator: FC<Props> = (props) => {
     fetchAuthState();
   }, []);
 
-  console.log(authState);
   return (
     <NavigationContainer theme={MyTheme}>
       <LoadingSpinner visible={authState.pending} />

@@ -149,7 +149,6 @@ const EditProduct: FC<Props> = ({ route }) => {
         headers: { "Content-Type": "multipart/form-data" },
       })
     );
-    console.log(formData);
     setBusy(false);
 
     if (res) {
