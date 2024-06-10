@@ -16,6 +16,7 @@ import { showMessage } from "react-native-flash-message";
 import LoadingSpinner from "@ui/LoadingSpinner";
 import { useDispatch } from "react-redux";
 import { Product, deleteItem } from "app/store/listings";
+import ChatIcon from "@components/ChatIcon";
 
 type Props = NativeStackScreenProps<ProfileNavigatorParamList, "DetailProduct">;
 
@@ -40,6 +41,7 @@ const DetailProduct: FC<Props> = ({ route, navigation }) => {
 
   const isAdmin = authState.profile?.id === product?.seller.id;
   const [busy, setBusy] = useState(false);
+  const [fetchingChatId, setFetchingChatId] = useState(false);
 
   const [showMenu, setShowMenu] = useState(false);
 
@@ -82,9 +84,13 @@ const DetailProduct: FC<Props> = ({ route, navigation }) => {
 
   const onChatButtonPress = async () => {
     if (!productInfo) return;
+
+    setFetchingChatId(true);
     const res = await runAxiosAsync<{ conversationId: string }>(
       authClient.get("/conversation/with/" + productInfo.seller.id)
     );
+    setFetchingChatId(false);
+
     if (res) {
       navigation.navigate("ChatWindow", {
         conversationId: res.conversationId,
@@ -110,9 +116,7 @@ const DetailProduct: FC<Props> = ({ route, navigation }) => {
       <View style={styles.container}>
         {productInfo ? <SingleProduct product={productInfo} /> : <></>}
 
-        <Pressable onPress={onChatButtonPress} style={styles.messageButton}>
-          <AntDesign name="message1" size={20} color={colours.white} />
-        </Pressable>
+        <ChatIcon onPress={onChatButtonPress} busy={fetchingChatId} />
       </View>
       <OptionsModal
         options={menuOptions}
