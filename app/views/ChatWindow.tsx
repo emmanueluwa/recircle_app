@@ -3,7 +3,7 @@ import BackButton from "@ui/BackButton";
 import colours from "@utils/colours";
 import useAuth from "app/hooks/useAuth";
 import { ProfileNavigatorParamList } from "app/navigator/ProfileNavigator";
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
 import { deleteItem } from "app/store/listings";
 import { AppStackParamList } from "app/navigator/AppNavigator";
@@ -16,9 +16,12 @@ import socket from "app/socket";
 import { useDispatch, useSelector } from "react-redux";
 import {
   Conversation,
+  addConversation,
   selectConversationById,
   updateConversation,
 } from "app/store/conversation";
+import useClient from "app/hooks/useClient";
+import { runAxiosAsync } from "app/api/runAxiosAsync";
 
 type Props = NativeStackScreenProps<AppStackParamList, "ChatWindow">;
 
@@ -62,6 +65,7 @@ const ChatWindow: FC<Props> = ({ route }) => {
   const { authState } = useAuth();
   const { conversationId, peerProfile } = route.params;
   const dispatch = useDispatch();
+  const { authClient } = useClient();
 
   if (!conversationId) return;
   const chats = useSelector(selectConversationById(conversationId));
@@ -98,6 +102,20 @@ const ChatWindow: FC<Props> = ({ route }) => {
     //sending message to api
     socket.emit("chat:new", newMessage);
   };
+
+  const fetchOldChats = async () => {
+    const res = await runAxiosAsync<{ conversation: Conversation }>(
+      authClient("/conversation/chats/" + conversationId)
+    );
+
+    if (res?.conversation) {
+      dispatch(addConversation([res.conversation]));
+    }
+  };
+
+  useEffect(() => {
+    fetchOldChats();
+  }, []);
 
   return (
     <View style={styles.container}>
