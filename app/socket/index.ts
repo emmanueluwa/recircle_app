@@ -4,9 +4,27 @@ import client, { baseURL } from "app/api/client";
 import { runAxiosAsync } from "app/api/runAxiosAsync";
 import { TokenResponse } from "app/hooks/useClient";
 import { Profile, updateAuthState } from "app/store/auth";
+import { updateConversation } from "app/store/conversation";
 import { io } from "socket.io-client";
 
 const socket = io(baseURL, { path: "/socket-message", autoConnect: false });
+
+type MessageProfile = {
+  id: string;
+  name: string;
+  avatar?: string;
+};
+
+type NewMessageResponse = {
+  message: {
+    id: string;
+    time: string;
+    text: string;
+    user: MessageProfile;
+  };
+  from: MessageProfile;
+  conversationId: string;
+};
 
 export const handleSocketConnection = (
   profile: Profile,
@@ -17,7 +35,16 @@ export const handleSocketConnection = (
 
   //handle new message
   socket.on("chat:message", (data) => {
-    console.log(data);
+    const { conversationId, from, message } = data;
+
+    //updating ongoing messages between users
+    dispatch(
+      updateConversation({
+        conversationId,
+        chat: message,
+        peerProfile: from,
+      })
+    );
   });
 
   socket.on("connect_error", async (error) => {

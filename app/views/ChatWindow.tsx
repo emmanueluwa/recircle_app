@@ -13,8 +13,12 @@ import PeerProfile from "@ui/PeerProfile";
 import { GiftedChat, IMessage } from "react-native-gifted-chat";
 import EmptyChatContainer from "@ui/EmptyChatContainer";
 import socket from "app/socket";
-import { useSelector } from "react-redux";
-import { Conversation, selectConversationById } from "app/store/conversation";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  Conversation,
+  selectConversationById,
+  updateConversation,
+} from "app/store/conversation";
 
 type Props = NativeStackScreenProps<AppStackParamList, "ChatWindow">;
 
@@ -49,12 +53,15 @@ const formatConversationToIMessage = (value?: Conversation): IMessage[] => {
     };
   });
 
-  return formattedValues || [];
+  const messages = formattedValues || [];
+
+  return messages.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 };
 
 const ChatWindow: FC<Props> = ({ route }) => {
   const { authState } = useAuth();
   const { conversationId, peerProfile } = route.params;
+  const dispatch = useDispatch();
 
   if (!conversationId) return;
   const chats = useSelector(selectConversationById(conversationId));
@@ -78,6 +85,15 @@ const ChatWindow: FC<Props> = ({ route }) => {
       conversationId,
       to: peerProfile.id,
     };
+
+    //update store and ui
+    dispatch(
+      updateConversation({
+        conversationId,
+        chat: newMessage.message,
+        peerProfile,
+      })
+    );
 
     //sending message to api
     socket.emit("chat:new", newMessage);
