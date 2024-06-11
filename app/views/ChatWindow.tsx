@@ -10,8 +10,9 @@ import { AppStackParamList } from "app/navigator/AppNavigator";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import AvatarView from "@ui/AvatarView";
 import PeerProfile from "@ui/PeerProfile";
-import { GiftedChat } from "react-native-gifted-chat";
+import { GiftedChat, IMessage } from "react-native-gifted-chat";
 import EmptyChatContainer from "@ui/EmptyChatContainer";
+import socket from "app/socket";
 
 type Props = NativeStackScreenProps<AppStackParamList, "ChatWindow">;
 
@@ -21,6 +22,10 @@ const ChatWindow: FC<Props> = ({ route }) => {
 
   const profile = authState.profile;
   if (!profile) return null;
+
+  const handleOnMessageSend = (messages: IMessage[]) => {
+    socket.emit("chat:new", { message: "This is from react native!" });
+  };
 
   return (
     <View style={styles.container}>
@@ -38,9 +43,7 @@ const ChatWindow: FC<Props> = ({ route }) => {
           name: profile.name,
           avatar: profile.avatar,
         }}
-        onSend={(messages) => {
-          console.log(messages);
-        }}
+        onSend={handleOnMessageSend}
         renderChatEmpty={() => <EmptyChatContainer />}
       />
     </View>

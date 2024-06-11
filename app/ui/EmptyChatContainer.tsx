@@ -3,11 +3,7 @@ import size from "@utils/size";
 import { FC } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
-interface Props {
-  title: string;
-  active?: boolean;
-  onPress?(): void;
-}
+interface Props {}
 
 const EmptyChatContainer: FC<Props> = () => {
   return (
