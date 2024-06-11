@@ -11,6 +11,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import AvatarView from "@ui/AvatarView";
 import PeerProfile from "@ui/PeerProfile";
 import { GiftedChat } from "react-native-gifted-chat";
+import EmptyChatContainer from "@ui/EmptyChatContainer";
 
 type Props = NativeStackScreenProps<AppStackParamList, "ChatWindow">;
 
@@ -40,6 +41,7 @@ const ChatWindow: FC<Props> = ({ route }) => {
         onSend={(messages) => {
           console.log(messages);
         }}
+        renderChatEmpty={() => <EmptyChatContainer />}
       />
     </View>
   );
