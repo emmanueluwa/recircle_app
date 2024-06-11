@@ -34,12 +34,13 @@ const menuOptions = [
 const DetailProduct: FC<Props> = ({ route, navigation }) => {
   const { authState } = useAuth();
   const { authClient } = useClient();
+  const dispatch = useDispatch();
+
   const { product, id } = route.params;
   const [productInfo, setProductInfo] = useState<Product>();
 
-  const dispatch = useDispatch();
+  const isAdmin = authState.profile?.id === productInfo?.seller.id;
 
-  const isAdmin = authState.profile?.id === product?.seller.id;
   const [busy, setBusy] = useState(false);
   const [fetchingChatId, setFetchingChatId] = useState(false);
 
@@ -116,7 +117,9 @@ const DetailProduct: FC<Props> = ({ route, navigation }) => {
       <View style={styles.container}>
         {productInfo ? <SingleProduct product={productInfo} /> : <></>}
 
-        <ChatIcon onPress={onChatButtonPress} busy={fetchingChatId} />
+        {!isAdmin && (
+          <ChatIcon onPress={onChatButtonPress} busy={fetchingChatId} />
+        )}
       </View>
       <OptionsModal
         options={menuOptions}
