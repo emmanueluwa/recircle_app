@@ -16,6 +16,23 @@ import socket from "app/socket";
 
 type Props = NativeStackScreenProps<AppStackParamList, "ChatWindow">;
 
+type OutGoingMessage = {
+  message: {
+    id: string;
+    time: string;
+    text: string;
+    user: { id: string; name: string; avatar?: string };
+  };
+  to: string;
+  conversationId: string;
+};
+
+const getTime = (value: IMessage["createdAt"]) => {
+  if (value instanceof Date) return value.toISOString();
+
+  return new Date(value).toISOString();
+};
+
 const ChatWindow: FC<Props> = ({ route }) => {
   const { authState } = useAuth();
   const { conversationId, peerProfile } = route.params;
@@ -24,7 +41,24 @@ const ChatWindow: FC<Props> = ({ route }) => {
   if (!profile) return null;
 
   const handleOnMessageSend = (messages: IMessage[]) => {
-    socket.emit("chat:new", { message: "This is from react native!" });
+    if (!profile) return;
+    if (!conversationId) return;
+
+    const currentMessage = messages[messages.length - 1];
+
+    const newMessage: OutGoingMessage = {
+      message: {
+        id: currentMessage._id.toString(),
+        text: currentMessage.text,
+        time: getTime(currentMessage.createdAt),
+        user: { id: profile.id, name: profile.name, avatar: profile.avatar },
+      },
+      conversationId,
+      to: peerProfile.id,
+    };
+
+    //sending message to api
+    socket.emit("chat:new", newMessage);
   };
 
   return (
