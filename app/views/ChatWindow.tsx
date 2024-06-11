@@ -10,11 +10,16 @@ import { AppStackParamList } from "app/navigator/AppNavigator";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import AvatarView from "@ui/AvatarView";
 import PeerProfile from "@ui/PeerProfile";
+import { GiftedChat } from "react-native-gifted-chat";
 
 type Props = NativeStackScreenProps<AppStackParamList, "ChatWindow">;
 
 const ChatWindow: FC<Props> = ({ route }) => {
+  const { authState } = useAuth();
   const { conversationId, peerProfile } = route.params;
+
+  const profile = authState.profile;
+  if (!profile) return null;
 
   return (
     <View style={styles.container}>
@@ -24,12 +29,24 @@ const ChatWindow: FC<Props> = ({ route }) => {
           <PeerProfile name={peerProfile.name} avatar={peerProfile.avatar} />
         }
       />
+
+      <GiftedChat
+        messages={[]}
+        user={{
+          _id: profile.id,
+          name: profile.name,
+          avatar: profile.avatar,
+        }}
+        onSend={(messages) => {
+          console.log(messages);
+        }}
+      />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {},
+  container: { flex: 1 },
 });
 
 export default ChatWindow;
