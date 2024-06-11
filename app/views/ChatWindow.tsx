@@ -13,6 +13,8 @@ import PeerProfile from "@ui/PeerProfile";
 import { GiftedChat, IMessage } from "react-native-gifted-chat";
 import EmptyChatContainer from "@ui/EmptyChatContainer";
 import socket from "app/socket";
+import { useSelector } from "react-redux";
+import { Conversation, selectConversationById } from "app/store/conversation";
 
 type Props = NativeStackScreenProps<AppStackParamList, "ChatWindow">;
 
@@ -33,9 +35,29 @@ const getTime = (value: IMessage["createdAt"]) => {
   return new Date(value).toISOString();
 };
 
+const formatConversationToIMessage = (value?: Conversation): IMessage[] => {
+  const formattedValues = value?.chats.map((chat) => {
+    return {
+      _id: chat.id,
+      text: chat.text,
+      createdAt: new Date(chat.time),
+      user: {
+        _id: chat.user.id,
+        name: chat.user.name,
+        avatar: chat.user.avatar,
+      },
+    };
+  });
+
+  return formattedValues || [];
+};
+
 const ChatWindow: FC<Props> = ({ route }) => {
   const { authState } = useAuth();
   const { conversationId, peerProfile } = route.params;
+
+  if (!conversationId) return;
+  const chats = useSelector(selectConversationById(conversationId));
 
   const profile = authState.profile;
   if (!profile) return null;
@@ -71,7 +93,7 @@ const ChatWindow: FC<Props> = ({ route }) => {
       />
 
       <GiftedChat
-        messages={[]}
+        messages={formatConversationToIMessage(chats)}
         user={{
           _id: profile.id,
           name: profile.name,

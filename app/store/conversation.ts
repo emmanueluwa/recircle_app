@@ -1,4 +1,5 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { RootState } from ".";
 
 interface UserProfile {
   id: string;
@@ -66,5 +67,14 @@ const slice = createSlice({
 });
 
 export const { addConversation, updateConversation } = slice.actions;
+
+export const selectConversationById = (conversationId: string) => {
+  return createSelector(
+    (state: RootState) => state,
+    ({ conversation }) => {
+      return conversation.conversations.find(({ id }) => id === conversationId);
+    }
+  );
+};
 
 export default slice.reducer;
