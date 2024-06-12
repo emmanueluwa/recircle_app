@@ -20,7 +20,7 @@ const profileImageSize = 50;
 const itemWidth = width - size.padding * 2;
 const seperatorWidth = width - profileImageSize - size.padding * 3;
 
-const LastChat: FC<Props> = ({
+const LastChatComponent: FC<Props> = ({
   avatar,
   name,
   timestamp,
@@ -107,4 +107,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LastChat;
+export default LastChatComponent;

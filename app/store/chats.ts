@@ -18,10 +18,16 @@ const slice = createSlice({
     addNewLastChats(state, { payload }: PayloadAction<LastChat[]>) {
       return payload;
     },
+    removeUnreadChatCount(chats, { payload }: PayloadAction<string>) {
+      const index = chats.findIndex((chat) => chat.id == payload);
+      if (index !== -1) {
+        chats[index].unreadChatCounts = 0;
+      }
+    },
   },
 });
 
-export const { addNewLastChats } = slice.actions;
+export const { addNewLastChats, removeUnreadChatCount } = slice.actions;
 
 export const getLastChats = createSelector(
   (state: RootState) => state,

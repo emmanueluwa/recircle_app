@@ -7,10 +7,14 @@ import BackButton from "@ui/BackButton";
 import EmptyView from "@ui/EmptyView";
 import useClient from "app/hooks/useClient";
 import { runAxiosAsync } from "app/api/runAxiosAsync";
-import { useSelector } from "react-redux";
-import { LastChat, getLastChats } from "app/store/chats";
-import { ListSeperator } from "@components/LastChat";
+import { useDispatch, useSelector } from "react-redux";
+import { LastChat, getLastChats, removeUnreadChatCount } from "app/store/chats";
+import LastChatComponent, {
+  ListSeperator,
+} from "@components/LastChatComponent";
 import size from "@utils/size";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
+import { ProfileNavigatorParamList } from "app/navigator/ProfileNavigator";
 
 const Stack = createNativeStackNavigator();
 
@@ -19,9 +23,25 @@ interface Props {}
 const Messages: FC<Props> = (props) => {
   const { authClient } = useClient();
   const chats = useSelector(getLastChats);
+  const dispatch = useDispatch();
+
+  const { navigate } =
+    useNavigation<NavigationProp<ProfileNavigatorParamList>>();
+
+  const sendSeenRequest = () => {};
 
   const onChatPress = (chat: LastChat) => {
-    console.log(chat);
+    //remove unread chat count
+    dispatch(removeUnreadChatCount(chat.id));
+
+    //updated viewed property in db
+    sendSeenRequest();
+
+    //navigate to chat screen
+    navigate("ChatWindow", {
+      conversationId: chat.id,
+      peerProfile: chat.peerProfile,
+    });
   };
 
   if (!chats.length)
@@ -40,7 +60,7 @@ const Messages: FC<Props> = (props) => {
         contentContainerStyle={styles.container}
         renderItem={({ item }) => (
           <Pressable onPress={() => onChatPress(item)}>
-            <LastChat
+            <LastChatComponent
               name={item.peerProfile.name}
               avatar={item.peerProfile.avatar}
               timestamp={item.timestamp}
