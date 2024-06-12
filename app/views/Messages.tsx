@@ -1,5 +1,5 @@
 import { FC, useEffect } from "react";
-import { FlatList, StyleSheet, Text, View } from "react-native";
+import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Profile from "@views/Profile";
 import AppHeader from "@components/AppHeader";
@@ -8,8 +8,8 @@ import EmptyView from "@ui/EmptyView";
 import useClient from "app/hooks/useClient";
 import { runAxiosAsync } from "app/api/runAxiosAsync";
 import { useSelector } from "react-redux";
-import { getLastChats } from "app/store/chats";
-import LastChat from "@components/LastChat";
+import { LastChat, getLastChats } from "app/store/chats";
+import { ListSeperator } from "@components/LastChat";
 import size from "@utils/size";
 
 const Stack = createNativeStackNavigator();
@@ -19,6 +19,10 @@ interface Props {}
 const Messages: FC<Props> = (props) => {
   const { authClient } = useClient();
   const chats = useSelector(getLastChats);
+
+  const onChatPress = (chat: LastChat) => {
+    console.log(chat);
+  };
 
   if (!chats.length)
     return (
@@ -35,12 +39,17 @@ const Messages: FC<Props> = (props) => {
         data={chats}
         contentContainerStyle={styles.container}
         renderItem={({ item }) => (
-          <LastChat
-            name={item.peerProfile.name}
-            avatar={item.peerProfile.avatar}
-            timestamp={item.timestamp}
-          />
+          <Pressable onPress={() => onChatPress(item)}>
+            <LastChat
+              name={item.peerProfile.name}
+              avatar={item.peerProfile.avatar}
+              timestamp={item.timestamp}
+              lastMessage={item.lastMessage}
+              unreadMessageCount={item.unreadChatCounts}
+            />
+          </Pressable>
         )}
+        ItemSeparatorComponent={() => <ListSeperator />}
       />
     </>
   );
