@@ -21,21 +21,25 @@ import { NavigationProp, useNavigation } from "@react-navigation/native";
 import useClient from "app/hooks/useClient";
 import { runAxiosAsync } from "app/api/runAxiosAsync";
 import { ProfileRes } from "app/navigator";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { updateAuthState } from "app/store/auth";
 import { showMessage } from "react-native-flash-message";
 import { selectImages } from "@utils/helper";
 import LoadingSpinner from "@ui/LoadingSpinner";
+import { getUnreadChatsCount } from "app/store/chats";
 
 interface Props {}
 
 const Profile: FC<Props> = (props) => {
-  const { navigate } =
-    useNavigation<NavigationProp<ProfileNavigatorParamList>>();
-
   const { authClient } = useClient();
   const { authState, signOut } = useAuth();
   const dispatch = useDispatch();
+
+  const { navigate } =
+    useNavigation<NavigationProp<ProfileNavigatorParamList>>();
+
+  const totalUnreadMessages = useSelector(getUnreadChatsCount);
+
   const [busy, setBusy] = useState(false);
   const [updatingAvatar, setUpdatingAvatar] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -191,6 +195,7 @@ const Profile: FC<Props> = (props) => {
         antIconName="message1"
         title="Messages"
         onPress={onMessagePress}
+        active={totalUnreadMessages > 0}
       />
 
       <ProfileOptionListItem

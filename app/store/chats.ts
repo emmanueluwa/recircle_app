@@ -34,4 +34,13 @@ export const getLastChats = createSelector(
   ({ chats }) => chats
 );
 
+export const getUnreadChatsCount = createSelector(
+  (state: RootState) => state,
+  ({ chats }) => {
+    return chats.reduce((previousValue, currentValue) => {
+      return previousValue + currentValue.unreadChatCounts;
+    }, 0);
+  }
+);
+
 export default slice.reducer;
