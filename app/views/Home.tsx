@@ -16,6 +16,7 @@ import { runAxiosAsync } from "app/api/runAxiosAsync";
 import socket, { handleSocketConnection } from "app/socket";
 import useAuth from "app/hooks/useAuth";
 import { useDispatch } from "react-redux";
+import { LastChat, addNewLastChats } from "app/store/chats";
 
 const testData = [];
 
@@ -52,8 +53,20 @@ const Home: FC<Props> = (props) => {
     }
   };
 
+  const fetchLastChats = async () => {
+    const res = await runAxiosAsync<{
+      chats: LastChat[];
+    }>(authClient("/conversation/last-chats"));
+
+    if (res) {
+      dispatch(addNewLastChats(res.chats));
+    }
+  };
+
   useEffect(() => {
     fetchLatestProduct();
+
+    fetchLastChats();
   }, []);
 
   useEffect(() => {

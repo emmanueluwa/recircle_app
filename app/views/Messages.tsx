@@ -1,5 +1,5 @@
 import { FC, useEffect } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { FlatList, StyleSheet, Text, View } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Profile from "@views/Profile";
 import AppHeader from "@components/AppHeader";
@@ -7,6 +7,8 @@ import BackButton from "@ui/BackButton";
 import EmptyView from "@ui/EmptyView";
 import useClient from "app/hooks/useClient";
 import { runAxiosAsync } from "app/api/runAxiosAsync";
+import { useSelector } from "react-redux";
+import { getLastChats } from "app/store/chats";
 
 const Stack = createNativeStackNavigator();
 
@@ -14,27 +16,7 @@ interface Props {}
 
 const Messages: FC<Props> = (props) => {
   const { authClient } = useClient();
-  const chats = [];
-
-  const fetchLastChats = async () => {
-    const res = await runAxiosAsync<{
-      chats: {
-        id: string;
-        lastMessage: string;
-        timestamp: Date;
-        unreadChatCounts: number;
-        peerProfile: { id: string; name: string; avatar?: string };
-      };
-    }>(authClient("/conversation/last-chats"));
-
-    if (res) {
-      console.log(res.chats);
-    }
-  };
-
-  useEffect(() => {
-    fetchLastChats();
-  }, []);
+  const chats = useSelector(getLastChats);
 
   if (!chats.length)
     return (
@@ -47,7 +29,10 @@ const Messages: FC<Props> = (props) => {
   return (
     <View>
       <AppHeader backButton={<BackButton />} />
-      <Text>Messages!</Text>
+      <FlatList
+        data={chats}
+        renderItem={({ item }) => <Text>{item.lastMessage}</Text>}
+      />
     </View>
   );
 };
