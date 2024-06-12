@@ -4,7 +4,7 @@ import { RootState } from ".";
 export interface LastChat {
   id: string;
   lastMessage: string;
-  timestamp: Date;
+  timestamp: string;
   unreadChatCounts: number;
   peerProfile: { id: string; name: string; avatar?: string };
 }

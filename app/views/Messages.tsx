@@ -9,6 +9,8 @@ import useClient from "app/hooks/useClient";
 import { runAxiosAsync } from "app/api/runAxiosAsync";
 import { useSelector } from "react-redux";
 import { getLastChats } from "app/store/chats";
+import LastChat from "@components/LastChat";
+import size from "@utils/size";
 
 const Stack = createNativeStackNavigator();
 
@@ -27,24 +29,25 @@ const Messages: FC<Props> = (props) => {
     );
 
   return (
-    <View>
+    <>
       <AppHeader backButton={<BackButton />} />
       <FlatList
         data={chats}
-        renderItem={({ item }) => <Text>{item.lastMessage}</Text>}
+        contentContainerStyle={styles.container}
+        renderItem={({ item }) => (
+          <LastChat
+            name={item.peerProfile.name}
+            avatar={item.peerProfile.avatar}
+            timestamp={item.timestamp}
+          />
+        )}
       />
-    </View>
+    </>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  innerContainer: {
-    padding: 15,
-    flex: 1,
-  },
-
-  formContainer: { marginTop: 30 },
+  container: { padding: size.padding },
 });
 
 export default Messages;
