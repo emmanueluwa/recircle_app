@@ -12,6 +12,7 @@ import {
   Text,
   Keyboard,
   View,
+  Image,
 } from "react-native";
 import SearchBar from "./SearchBar";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -49,22 +50,24 @@ const searchResults = [
   // { id: 20, name: "Anatolian Shepherd" },
 ];
 
-type SearchResult= {
-    id: number;
-    name: string;
-}
+type SearchResult = {
+  id: number;
+  name: string;
+  thumbnail?: string;
+};
 
 const SearchModal: FC<Props> = ({ visible, onClose }) => {
   const { authClient } = useClient();
 
   const [query, setQuery] = useState("");
+  const [results, setResults] = useState<SearchResult[]>([]);
 
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   const [busy, setBusy] = useState(false);
 
   const searchProduct = async (query: string) => {
     if (query.trim().length >= 3) {
-      return await runAxiosAsync<{results:SearchResult[]}>(
+      return await runAxiosAsync<{ results: SearchResult[] }>(
         authClient.get("/product/search?name=" + query)
       );
     }
@@ -75,7 +78,10 @@ const SearchModal: FC<Props> = ({ visible, onClose }) => {
   const handleChange = async (value: string) => {
     setQuery(value);
 
-    searchDebounce(value);
+    const res = await searchDebounce(value);
+    if (res) {
+      setResults(res.results);
+    }
   };
 
   const handleClose = () => {
@@ -138,9 +144,13 @@ const SearchModal: FC<Props> = ({ visible, onClose }) => {
           {/* search suggestions */}
           <View style={{ paddingBottom: keyboardHeight }}>
             <FlatList
-              data={searchResults}
+              data={results}
               renderItem={({ item }) => (
-                <Pressable>
+                <Pressable style={styles.searchResultItem}>
+                  <Image
+                    source={{ uri: item.thumbnail || undefined }}
+                    style={styles.thumbnail}
+                  />
                   <Text style={styles.suggestionListItem}>{item.name}</Text>
                 </Pressable>
               )}
@@ -159,6 +169,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
+  },
+  searchResultItem: { flexDirection: "row", marginBottom: 7 },
+  thumbnail: {
+    width: 60,
+    height: 40,
+    marginRight: 10,
   },
   innerContainer: { padding: size.padding, flex: 1 },
   header: { flexDirection: "row", alignItems: "center" },
