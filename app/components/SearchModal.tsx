@@ -21,6 +21,8 @@ import LottieView from "lottie-react-native";
 import useClient from "app/hooks/useClient";
 import { runAxiosAsync } from "app/api/runAxiosAsync";
 import { debounce } from "@utils/helper";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
+import { AppStackParamList } from "app/navigator/AppNavigator";
 
 interface Props {
   visible: boolean;
@@ -51,13 +53,14 @@ const searchResults = [
 ];
 
 type SearchResult = {
-  id: number;
+  id: string;
   name: string;
   thumbnail?: string;
 };
 
 const SearchModal: FC<Props> = ({ visible, onClose }) => {
   const { authClient } = useClient();
+  const { navigate } = useNavigation<NavigationProp<AppStackParamList>>();
 
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
@@ -72,6 +75,11 @@ const SearchModal: FC<Props> = ({ visible, onClose }) => {
         authClient.get("/product/search?name=" + query)
       );
     }
+  };
+
+  const handleOnResultPress = (result: SearchResult) => {
+    navigate("DetailProduct", { id: result.id });
+    handleClose();
   };
 
   const searchDebounce = debounce(searchProduct, 300);
@@ -151,7 +159,10 @@ const SearchModal: FC<Props> = ({ visible, onClose }) => {
             <FlatList
               data={!busy ? results : []}
               renderItem={({ item }) => (
-                <Pressable style={styles.searchResultItem}>
+                <Pressable
+                  onPress={() => handleOnResultPress(item)}
+                  style={styles.searchResultItem}
+                >
                   <Image
                     source={{ uri: item.thumbnail || undefined }}
                     style={styles.thumbnail}
