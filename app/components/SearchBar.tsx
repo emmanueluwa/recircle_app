@@ -1,21 +1,8 @@
 import { useNavigation } from "@react-navigation/native";
-import AvatarView from "@ui/AvatarView";
 import { AntDesign } from "@expo/vector-icons";
 import colours from "@utils/colours";
-import { formatDate } from "@utils/date";
-import { formatPrice } from "@utils/helper";
-import size from "@utils/size";
 import { FC, useState } from "react";
-import {
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
-import ImageSlider from "./ImageSlider";
-import { Product } from "app/store/listings";
+import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 
 interface Props {
   asButton?: boolean;
