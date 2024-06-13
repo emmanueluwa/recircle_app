@@ -17,15 +17,29 @@ import {
 import ImageSlider from "./ImageSlider";
 import { Product } from "app/store/listings";
 
-interface Props {}
+interface Props {
+  asButton?: boolean;
+  onPress?: void;
+}
 
-const SearchBar: FC<Props> = ({}) => {
+const SearchBar: FC<Props> = ({ asButton, onPress }) => {
   const { goBack, canGoBack } = useNavigation();
   return (
-    <View style={styles.container}>
+    <Pressable onPress={onPress} style={styles.container}>
       <AntDesign name="search1" size={20} color={colours.primary} />
-      <TextInput placeholder="Search here..." style={styles.textInput} />
-    </View>
+
+      {asButton ? (
+        <View style={styles.textInput}>
+          <Text style={styles.fakePlaceHolder}>Search here...</Text>
+        </View>
+      ) : (
+        <TextInput
+          placeholder="Search here..."
+          style={[styles.textInput, styles.textInputText]}
+          autoFocus
+        />
+      )}
+    </Pressable>
   );
 };
 
@@ -37,7 +51,17 @@ const styles = StyleSheet.create({
     borderColor: colours.primary,
     padding: 10,
   },
-  textInput: { paddingLeft: 10, flex: 1, color: colours.primary, fontSize: 18 },
+  textInput: { paddingLeft: 10, flex: 1 },
+  textInputText: {
+    color: colours.primary,
+    fontSize: 18,
+  },
+  fakePlaceHolder: {
+    color: colours.primary,
+    fontSize: 18,
+    opacity: 0.5,
+    fontWeight: "200",
+  },
 });
 
 export default SearchBar;

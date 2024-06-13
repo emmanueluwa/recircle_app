@@ -21,6 +21,7 @@ import {
   addNewLastChats,
   getUnreadChatsCount,
 } from "app/store/chats";
+import SearchModal from "@components/SearchModal";
 
 const testData = [];
 
@@ -41,12 +42,14 @@ export interface SignInRes {
 }
 
 const Home: FC<Props> = (props) => {
-  const [products, setProducts] = useState<LatestProduct[]>([]);
   const { navigate } = useNavigation<NavigationProp<AppStackParamList>>();
 
   const { authClient } = useClient();
   const { authState } = useAuth();
   const dispatch = useDispatch();
+
+  const [products, setProducts] = useState<LatestProduct[]>([]);
+  const [showSearchModal, setShowSearchModal] = useState(false);
 
   const totalUnreadMessages = useSelector(getUnreadChatsCount);
 
@@ -90,7 +93,7 @@ const Home: FC<Props> = (props) => {
         indicate={totalUnreadMessages > 0}
       />
       <ScrollView style={styles.container}>
-        <SearchBar />
+        <SearchBar asButton onPress={() => setShowSearchModal(true)} />
         <CategoryList
           onPress={(category) => navigate("ProductList", { category })}
         />
@@ -99,6 +102,8 @@ const Home: FC<Props> = (props) => {
           onPress={({ id }) => navigate("DetailProduct", { id })}
         />
       </ScrollView>
+
+      <SearchModal visible={showSearchModal} onClose={setShowSearchModal} />
     </>
   );
 };
