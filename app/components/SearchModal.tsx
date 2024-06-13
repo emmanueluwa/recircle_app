@@ -17,6 +17,9 @@ import SearchBar from "./SearchBar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import EmptyView from "@ui/EmptyView";
 import LottieView from "lottie-react-native";
+import useClient from "app/hooks/useClient";
+import { runAxiosAsync } from "app/api/runAxiosAsync";
+import { debounce } from "@utils/helper";
 
 interface Props {
   visible: boolean;
@@ -24,31 +27,56 @@ interface Props {
 }
 
 const searchResults = [
-  // { id: 1, name: "Bentley Bentayga" },
-  // { id: 2, name: "Mercedes-Benz G-Class" },
-  // { id: 3, name: "Porsche Cayenne" },
-  // { id: 4, name: "Lamborghini Urus" },
-  // { id: 5, name: "Audi Q8" },
-  // { id: 6, name: "BMW X7" },
-  // { id: 7, name: "Range Rover Velar" },
-  // { id: 8, name: "Tesla Model X" },
-  // { id: 9, name: "Maserati Levante" },
-  // { id: 10, name: "Rolls-Royce Cullinan" },
-  // { id: 11, name: "Great Dane" },
-  // { id: 12, name: "Mastiff" },
-  // { id: 13, name: "Saint Bernard" },
-  // { id: 14, name: "Bernese Mountain Dog" },
-  // { id: 15, name: "Newfoundland" },
-  // { id: 16, name: "Rottweiler" },
-  // { id: 17, name: "Irish Wolfhound" },
-  // { id: 18, name: "Leonberger" },
-  // { id: 19, name: "Great Pyrenees" },
+  { id: 1, name: "Bentley Bentayga" },
+  { id: 2, name: "Mercedes-Benz G-Class" },
+  { id: 3, name: "Porsche Cayenne" },
+  { id: 4, name: "Lamborghini Urus" },
+  { id: 5, name: "Audi Q8" },
+  { id: 6, name: "BMW X7" },
+  { id: 7, name: "Range Rover Velar" },
+  { id: 8, name: "Tesla Model X" },
+  { id: 9, name: "Maserati Levante" },
+  { id: 10, name: "Rolls-Royce Cullinan" },
+  { id: 11, name: "Great Dane" },
+  { id: 12, name: "Mastiff" },
+  { id: 13, name: "Saint Bernard" },
+  { id: 14, name: "Bernese Mountain Dog" },
+  { id: 15, name: "Newfoundland" },
+  { id: 16, name: "Rottweiler" },
+  { id: 17, name: "Irish Wolfhound" },
+  { id: 18, name: "Leonberger" },
+  { id: 19, name: "Great Pyrenees" },
   // { id: 20, name: "Anatolian Shepherd" },
 ];
 
+type SearchResult= {
+    id: number;
+    name: string;
+}
+
 const SearchModal: FC<Props> = ({ visible, onClose }) => {
+  const { authClient } = useClient();
+
+  const [query, setQuery] = useState("");
+
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   const [busy, setBusy] = useState(false);
+
+  const searchProduct = async (query: string) => {
+    if (query.trim().length >= 3) {
+      return await runAxiosAsync<{results:SearchResult[]}>(
+        authClient.get("/product/search?name=" + query)
+      );
+    }
+  };
+
+  const searchDebounce = debounce(searchProduct, 300);
+
+  const handleChange = async (value: string) => {
+    setQuery(value);
+
+    searchDebounce(value);
+  };
 
   const handleClose = () => {
     onClose(!visible);
@@ -77,6 +105,7 @@ const SearchModal: FC<Props> = ({ visible, onClose }) => {
   return (
     <Modal animationType="fade" onRequestClose={handleClose} visible={visible}>
       <SafeAreaView style={styles.container}>
+        {/* searchbar */}
         <View style={styles.innerContainer}>
           <View style={styles.header}>
             <Pressable onPress={handleClose}>
@@ -88,7 +117,7 @@ const SearchModal: FC<Props> = ({ visible, onClose }) => {
             </Pressable>
 
             <View style={styles.searchBar}>
-              <SearchBar />
+              <SearchBar onChange={handleChange} value={query} />
             </View>
           </View>
 
@@ -117,7 +146,7 @@ const SearchModal: FC<Props> = ({ visible, onClose }) => {
               )}
               keyExtractor={(item) => item.id.toString()}
               contentContainerStyle={styles.suggestionList}
-              // ListEmptyComponent={<EmptyView title="No results found..." />}
+              ListEmptyComponent={<EmptyView title="No results found..." />}
             />
           </View>
         </View>

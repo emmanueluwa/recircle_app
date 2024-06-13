@@ -7,9 +7,11 @@ import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 interface Props {
   asButton?: boolean;
   onPress?: void;
+  onChange?(text: string): void;
+  value?: string;
 }
 
-const SearchBar: FC<Props> = ({ asButton, onPress }) => {
+const SearchBar: FC<Props> = ({ asButton, onPress, onChange, value }) => {
   const { goBack, canGoBack } = useNavigation();
   return (
     <Pressable onPress={onPress} style={styles.container}>
@@ -24,6 +26,9 @@ const SearchBar: FC<Props> = ({ asButton, onPress }) => {
           placeholder="Search here..."
           style={[styles.textInput, styles.textInputText]}
           autoFocus
+          onChangeText={onChange}
+          value={value}
+          onSubmitEditing={() => console.log("submitting")}
         />
       )}
     </Pressable>

@@ -31,3 +31,16 @@ export const selectImages = async (
 
   return results;
 };
+
+let timeoutId: NodeJS.Timeout;
+export const debounce = <T extends any[]>(
+  func: (...args: T) => any,
+  timeout: number
+) => {
+  return (...args: T) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => {
+      func(...args);
+    }, timeout);
+  };
+};
