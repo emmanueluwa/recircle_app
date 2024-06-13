@@ -16,6 +16,7 @@ import {
 import SearchBar from "./SearchBar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import EmptyView from "@ui/EmptyView";
+import LottieView from "lottie-react-native";
 
 interface Props {
   visible: boolean;
@@ -47,6 +48,7 @@ const searchResults = [
 
 const SearchModal: FC<Props> = ({ visible, onClose }) => {
   const [keyboardHeight, setKeyboardHeight] = useState(0);
+  const [busy, setBusy] = useState(false);
 
   const handleClose = () => {
     onClose(!visible);
@@ -90,6 +92,20 @@ const SearchModal: FC<Props> = ({ visible, onClose }) => {
             </View>
           </View>
 
+          {/* busy indicator */}
+          {busy ? (
+            <View style={styles.busyIconContainer}>
+              <View style={styles.busyAnimationSize}>
+                <LottieView
+                  style={styles.flex1}
+                  autoPlay
+                  loop
+                  source={require("../../assets/loading_2.json")}
+                />
+              </View>
+            </View>
+          ) : null}
+
           {/* search suggestions */}
           <View style={{ paddingBottom: keyboardHeight }}>
             <FlatList
@@ -101,7 +117,7 @@ const SearchModal: FC<Props> = ({ visible, onClose }) => {
               )}
               keyExtractor={(item) => item.id.toString()}
               contentContainerStyle={styles.suggestionList}
-              ListEmptyComponent={<EmptyView title="No results found..." />}
+              // ListEmptyComponent={<EmptyView title="No results found..." />}
             />
           </View>
         </View>
@@ -115,7 +131,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
-  innerContainer: { padding: size.padding },
+  innerContainer: { padding: size.padding, flex: 1 },
   header: { flexDirection: "row", alignItems: "center" },
   searchBar: { flex: 1, marginLeft: size.padding },
   suggestionList: { padding: size.padding },
@@ -125,6 +141,14 @@ const styles = StyleSheet.create({
     paddingVertical: 7,
     fontSize: 18,
   },
+  busyIconContainer: {
+    flex: 0.3,
+    alignItems: "center",
+    justifyContent: "center",
+    opacity: 0.5,
+  },
+  busyAnimationSize: { height: 100, width: 100 },
+  flex1: { flex: 1 },
 });
 
 export default SearchModal;
