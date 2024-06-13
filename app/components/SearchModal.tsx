@@ -64,6 +64,7 @@ const SearchModal: FC<Props> = ({ visible, onClose }) => {
 
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   const [busy, setBusy] = useState(false);
+  const [notFound, setNotFound] = useState(false);
 
   const searchProduct = async (query: string) => {
     if (query.trim().length >= 3) {
@@ -76,11 +77,15 @@ const SearchModal: FC<Props> = ({ visible, onClose }) => {
   const searchDebounce = debounce(searchProduct, 300);
 
   const handleChange = async (value: string) => {
+    setNotFound(false);
     setQuery(value);
+    setBusy(true);
 
     const res = await searchDebounce(value);
+    setBusy(false);
     if (res) {
-      setResults(res.results);
+      if (res.results.length) setResults(res.results);
+      else setNotFound(true);
     }
   };
 
@@ -144,7 +149,7 @@ const SearchModal: FC<Props> = ({ visible, onClose }) => {
           {/* search suggestions */}
           <View style={{ paddingBottom: keyboardHeight }}>
             <FlatList
-              data={results}
+              data={!busy ? results : []}
               renderItem={({ item }) => (
                 <Pressable style={styles.searchResultItem}>
                   <Image
@@ -156,7 +161,9 @@ const SearchModal: FC<Props> = ({ visible, onClose }) => {
               )}
               keyExtractor={(item) => item.id.toString()}
               contentContainerStyle={styles.suggestionList}
-              ListEmptyComponent={<EmptyView title="No results found..." />}
+              ListEmptyComponent={
+                notFound ? <EmptyView title="No results found..." /> : null
+              }
             />
           </View>
         </View>
