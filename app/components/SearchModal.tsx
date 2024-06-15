@@ -23,34 +23,12 @@ import { runAxiosAsync } from "app/api/runAxiosAsync";
 import { debounce } from "@utils/helper";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { AppStackParamList } from "app/navigator/AppNavigator";
+import KeyboardShift from "./KeyboardShift";
 
 interface Props {
   visible: boolean;
   onClose(visible: boolean): void;
 }
-
-const searchResults = [
-  { id: 1, name: "Bentley Bentayga" },
-  { id: 2, name: "Mercedes-Benz G-Class" },
-  { id: 3, name: "Porsche Cayenne" },
-  { id: 4, name: "Lamborghini Urus" },
-  { id: 5, name: "Audi Q8" },
-  { id: 6, name: "BMW X7" },
-  { id: 7, name: "Range Rover Velar" },
-  { id: 8, name: "Tesla Model X" },
-  { id: 9, name: "Maserati Levante" },
-  { id: 10, name: "Rolls-Royce Cullinan" },
-  { id: 11, name: "Great Dane" },
-  { id: 12, name: "Mastiff" },
-  { id: 13, name: "Saint Bernard" },
-  { id: 14, name: "Bernese Mountain Dog" },
-  { id: 15, name: "Newfoundland" },
-  { id: 16, name: "Rottweiler" },
-  { id: 17, name: "Irish Wolfhound" },
-  { id: 18, name: "Leonberger" },
-  { id: 19, name: "Great Pyrenees" },
-  // { id: 20, name: "Anatolian Shepherd" },
-];
 
 type SearchResult = {
   id: string;
@@ -155,28 +133,31 @@ const SearchModal: FC<Props> = ({ visible, onClose }) => {
           ) : null}
 
           {/* search suggestions */}
-          <View style={{ paddingBottom: keyboardHeight }}>
-            <FlatList
-              data={!busy ? results : []}
-              renderItem={({ item }) => (
-                <Pressable
-                  onPress={() => handleOnResultPress(item)}
-                  style={styles.searchResultItem}
-                >
-                  <Image
-                    source={{ uri: item.thumbnail || undefined }}
-                    style={styles.thumbnail}
-                  />
-                  <Text style={styles.suggestionListItem}>{item.name}</Text>
-                </Pressable>
-              )}
-              keyExtractor={(item) => item.id.toString()}
-              contentContainerStyle={styles.suggestionList}
-              ListEmptyComponent={
-                notFound ? <EmptyView title="No results found..." /> : null
-              }
-            />
-          </View>
+          <KeyboardShift>
+            {/* <View style={{ paddingBottom: keyboardHeight }}> */}
+            <View>
+              <FlatList
+                data={!busy ? results : []}
+                renderItem={({ item }) => (
+                  <Pressable
+                    onPress={() => handleOnResultPress(item)}
+                    style={styles.searchResultItem}
+                  >
+                    <Image
+                      source={{ uri: item.thumbnail || undefined }}
+                      style={styles.thumbnail}
+                    />
+                    <Text style={styles.suggestionListItem}>{item.name}</Text>
+                  </Pressable>
+                )}
+                keyExtractor={(item) => item.id.toString()}
+                contentContainerStyle={styles.suggestionList}
+                ListEmptyComponent={
+                  notFound ? <EmptyView title="No results found..." /> : null
+                }
+              />
+            </View>
+          </KeyboardShift>
         </View>
       </SafeAreaView>
     </Modal>

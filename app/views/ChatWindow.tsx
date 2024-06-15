@@ -61,6 +61,9 @@ const formatConversationToIMessage = (value?: Conversation): IMessage[] => {
   return messages.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 };
 
+let timeoutId: NodeJS.Timeout | null;
+const TYPING_TIMEOUT = 2000;
+
 const ChatWindow: FC<Props> = ({ route }) => {
   const { authState } = useAuth();
   const { conversationId, peerProfile } = route.params;
@@ -72,6 +75,8 @@ const ChatWindow: FC<Props> = ({ route }) => {
 
   const profile = authState.profile;
   if (!profile) return null;
+
+  const [typing, setTyping] = useState(false);
 
   const handleOnMessageSend = (messages: IMessage[]) => {
     if (!profile) return;
@@ -94,7 +99,7 @@ const ChatWindow: FC<Props> = ({ route }) => {
     dispatch(
       updateConversation({
         conversationId,
-        chat: newMessage.message,
+        chat: { ...newMessage.message, viewed: false },
         peerProfile,
       })
     );
@@ -110,6 +115,35 @@ const ChatWindow: FC<Props> = ({ route }) => {
 
     if (res?.conversation) {
       dispatch(addConversation([res.conversation]));
+    }
+  };
+
+  const updateTypingStatus = (data: { typing: boolean }) => {
+    setTyping(data.typing);
+  };
+
+  const emitTypingEnd = (timeout: number) => {
+    return setTimeout(() => {
+      socket.emit("chat:typing", { active: false, to: peerProfile.id });
+
+      timeoutId = null;
+    }, timeout);
+  };
+
+  const handleOnInputChange = () => {
+    //notify that other user is typing
+
+    //if still typing, invalidate previous typing end request
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+
+      timeoutId = emitTypingEnd(TYPING_TIMEOUT);
+    } else {
+      //typing has started
+      socket.emit("chat:typing", { active: true, to: peerProfile.id });
+
+      //typing has ended
+      timeoutId = emitTypingEnd(TYPING_TIMEOUT);
     }
   };
 
@@ -135,6 +169,7 @@ const ChatWindow: FC<Props> = ({ route }) => {
         }}
         onSend={handleOnMessageSend}
         renderChatEmpty={() => <EmptyChatContainer />}
+        onInputTextChanged={handleOnInputChange}
       />
     </View>
   );
