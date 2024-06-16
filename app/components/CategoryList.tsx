@@ -1,13 +1,7 @@
-import { useNavigation } from "@react-navigation/native";
 import colours from "@utils/colours";
-import size from "@utils/size";
 import { FC, useState } from "react";
 import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
-import OptionsModal from "./OptionsModal";
-import OptionSelector from "@ui/OptionSelector";
-import CategoryOption from "@ui/CategoryOption";
 import categories from "@utils/categories";
-import { deleteItem } from "app/store/listings";
 
 interface Props {
   onPress(category: string): void;
