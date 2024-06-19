@@ -28,18 +28,10 @@ const Messages: FC<Props> = (props) => {
   const { navigate } =
     useNavigation<NavigationProp<ProfileNavigatorParamList>>();
 
-  const sendSeenRequest = (conversationId: string, peerId: string) => {
-    runAxiosAsync(
-      authClient.patch(`/conversation/seen/${conversationId}/${peerId}`)
-    );
-  };
-
   const onChatPress = (chat: LastChat) => {
     //remove unread chat count
     dispatch(removeUnreadChatCount(chat.id));
 
-    //updated viewed property in db
-    sendSeenRequest(chat.id, chat.peerProfile.id);
 
     //navigate to chat screen
     navigate("ChatWindow", {

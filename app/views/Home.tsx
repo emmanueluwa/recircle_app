@@ -73,9 +73,12 @@ const Home: FC<Props> = (props) => {
   };
 
   useEffect(() => {
-    fetchLatestProduct();
+    const handleApiRequest = async () => {
+      await fetchLatestProduct();
 
-    fetchLastChats();
+      await fetchLastChats();
+    };
+    handleApiRequest();
   }, []);
 
   useEffect(() => {

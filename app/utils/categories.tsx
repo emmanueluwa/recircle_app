@@ -1,7 +1,7 @@
 import SvgIcon from "app/svg/SvgIcons";
 
 const categories = [
-  { name: "Automotive", icon: <SvgIcon.Automobile /> },
+  { name: "Automotive", icon: <SvgIcon.Fish /> },
   { name: "Beauty & Personal Care", icon: <SvgIcon.Beauty /> },
   { name: "Books", icon: <SvgIcon.Books /> },
   { name: "Electronics", icon: <SvgIcon.Electronics /> },

@@ -22,6 +22,7 @@ import {
 } from "app/store/conversation";
 import useClient from "app/hooks/useClient";
 import { runAxiosAsync } from "app/api/runAxiosAsync";
+import EmptyView from "@ui/EmptyView";
 
 type Props = NativeStackScreenProps<AppStackParamList, "ChatWindow">;
 
@@ -71,10 +72,10 @@ const ChatWindow: FC<Props> = ({ route }) => {
   const { authClient } = useClient();
 
   if (!conversationId) return;
-  const chats = useSelector(selectConversationById(conversationId));
+  const conversation = useSelector(selectConversationById(conversationId));
+  const [fetchingChats, setFetchingChats] = useState(false);
 
   const profile = authState.profile;
-  if (!profile) return null;
 
   const [typing, setTyping] = useState(false);
 
@@ -109,9 +110,12 @@ const ChatWindow: FC<Props> = ({ route }) => {
   };
 
   const fetchOldChats = async () => {
+    setFetchingChats(true);
+
     const res = await runAxiosAsync<{ conversation: Conversation }>(
       authClient("/conversation/chats/" + conversationId)
     );
+    setFetchingChats(false);
 
     if (res?.conversation) {
       dispatch(addConversation([res.conversation]));
@@ -147,9 +151,28 @@ const ChatWindow: FC<Props> = ({ route }) => {
     }
   };
 
+  const sendSeenRequest = () => {
+    runAxiosAsync(
+      authClient.patch(`/conversation/seen/${conversationId}/${peerProfile.id}`)
+    );
+  };
+
   useEffect(() => {
-    fetchOldChats();
-  }, []);
+    const handleApiRequest = async () => {
+      if (conversation?.chats.length) return;
+
+      await fetchOldChats();
+
+      //updated viewed property in db
+      await sendSeenRequest();
+    };
+
+    handleApiRequest();
+  }, [conversation]);
+
+  if (!profile) return null;
+
+  if (fetchingChats) return <EmptyView title="Please wait..." />;
 
   return (
     <View style={styles.container}>
@@ -161,7 +184,7 @@ const ChatWindow: FC<Props> = ({ route }) => {
       />
 
       <GiftedChat
-        messages={formatConversationToIMessage(chats)}
+        messages={formatConversationToIMessage(conversation)}
         user={{
           _id: profile.id,
           name: profile.name,
