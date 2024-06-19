@@ -4,7 +4,7 @@ import client, { baseURL } from "app/api/client";
 import { runAxiosAsync } from "app/api/runAxiosAsync";
 import { TokenResponse } from "app/hooks/useClient";
 import { Profile, updateAuthState } from "app/store/auth";
-import { updateConversation } from "app/store/conversation";
+import { updateChatViewed, updateConversation } from "app/store/conversation";
 import { io } from "socket.io-client";
 
 const socket = io(baseURL, { path: "/socket-message", autoConnect: false });
@@ -27,6 +27,11 @@ export type NewMessageResponse = {
   conversationId: string;
 };
 
+type SeenData = {
+  messageId: string;
+  conversationId: string;
+};
+
 export const handleSocketConnection = (
   profile: Profile,
   dispatch: Dispatch<UnknownAction>
@@ -46,6 +51,10 @@ export const handleSocketConnection = (
         peerProfile: from,
       })
     );
+  });
+
+  socket.on("chat:seen", async (seenData: SeenData) => {
+    dispatch(updateChatViewed(seenData));
   });
 
   socket.on("connect_error", async (error) => {

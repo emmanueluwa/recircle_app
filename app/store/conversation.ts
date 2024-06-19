@@ -45,6 +45,23 @@ const slice = createSlice({
     ) {
       state.conversations = payload;
     },
+    updateChatViewed(
+      state,
+      { payload }: PayloadAction<{ messageId: string; conversationId: string }>
+    ) {
+      const index = state.conversations.findIndex(
+        ({ id }) => id === payload.conversationId
+      );
+
+      if (index !== -1) {
+        state.conversations[index].chats.map((chat) => {
+          if (chat.id === payload.messageId) {
+            chat.viewed = true;
+          }
+          return chat;
+        });
+      }
+    },
     updateConversation(
       { conversations },
       { payload }: PayloadAction<UpdatePayload>
@@ -66,7 +83,8 @@ const slice = createSlice({
   },
 });
 
-export const { addConversation, updateConversation } = slice.actions;
+export const { addConversation, updateConversation, updateChatViewed } =
+  slice.actions;
 
 export const selectConversationById = (conversationId: string) => {
   return createSelector(
