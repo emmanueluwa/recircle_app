@@ -3,7 +3,7 @@ import BackButton from "@ui/BackButton";
 import colours from "@utils/colours";
 import useAuth from "app/hooks/useAuth";
 import { ProfileNavigatorParamList } from "app/navigator/ProfileNavigator";
-import { FC, useEffect, useState } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
 import { deleteItem } from "app/store/listings";
 import { AppStackParamList } from "app/navigator/AppNavigator";
@@ -12,7 +12,7 @@ import AvatarView from "@ui/AvatarView";
 import PeerProfile from "@ui/PeerProfile";
 import { GiftedChat, IMessage } from "react-native-gifted-chat";
 import EmptyChatContainer from "@ui/EmptyChatContainer";
-import socket from "app/socket";
+import socket, { NewMessageResponse } from "app/socket";
 import { useDispatch, useSelector } from "react-redux";
 import {
   Conversation,
@@ -23,6 +23,7 @@ import {
 import useClient from "app/hooks/useClient";
 import { runAxiosAsync } from "app/api/runAxiosAsync";
 import EmptyView from "@ui/EmptyView";
+import { useFocusEffect } from "@react-navigation/native";
 
 type Props = NativeStackScreenProps<AppStackParamList, "ChatWindow">;
 
@@ -49,6 +50,7 @@ const formatConversationToIMessage = (value?: Conversation): IMessage[] => {
       _id: chat.id,
       text: chat.text,
       createdAt: new Date(chat.time),
+      received: chat.viewed,
       user: {
         _id: chat.user.id,
         name: chat.user.name,
@@ -159,8 +161,6 @@ const ChatWindow: FC<Props> = ({ route }) => {
 
   useEffect(() => {
     const handleApiRequest = async () => {
-      if (conversation?.chats.length) return;
-
       await fetchOldChats();
 
       //updated viewed property in db
@@ -168,7 +168,23 @@ const ChatWindow: FC<Props> = ({ route }) => {
     };
 
     handleApiRequest();
-  }, [conversation]);
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      const updateSeenStatus = (data: NewMessageResponse) => {
+        socket.emit("chat:seen", {
+          messageId: data.message.id,
+          conversationId,
+          peerId: peerProfile.id,
+        });
+      };
+
+      socket.on("chat:message", updateSeenStatus);
+
+      return () => socket.off("chat:message", updateSeenStatus);
+    }, [])
+  );
 
   if (!profile) return null;
 

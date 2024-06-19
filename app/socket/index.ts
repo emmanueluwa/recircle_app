@@ -15,12 +15,13 @@ type MessageProfile = {
   avatar?: string;
 };
 
-type NewMessageResponse = {
+export type NewMessageResponse = {
   message: {
     id: string;
     time: string;
     text: string;
     user: MessageProfile;
+    viewed: boolean;
   };
   from: MessageProfile;
   conversationId: string;
