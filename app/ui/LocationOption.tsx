@@ -7,19 +7,19 @@ interface Props {
   name: string;
 }
 
-const CategoryOption: FC<Props> = ({ icon, name }) => {
+const LocationOption: FC<Props> = ({ icon, name }) => {
   return (
     <View style={styles.container}>
       <View style={styles.icon}>{icon}</View>
-      <Text style={styles.category}>{name}</Text>
+      <Text style={styles.location}>{name}</Text>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: { flexDirection: "row", alignItems: "center" },
-  category: { color: colours.primary, paddingVertical: 10 },
-  icon: { transform: [{ scale: 0.5 }] },
+  location: { color: colours.primary, paddingVertical: 10 },
+  icon: { transform: [{ scale: 0.8 }] },
 });
 
-export default CategoryOption;
+export default LocationOption;

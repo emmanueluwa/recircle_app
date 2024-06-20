@@ -29,6 +29,10 @@ import LoadingSpinner from "@ui/LoadingSpinner";
 import OptionSelector from "@ui/OptionSelector";
 import { selectImages } from "@utils/helper";
 import CategoryOptions from "@components/CategoryOptions";
+import LocationOptions from "@components/LocationOptions";
+import LocationOptionsModal from "@components/LocationOptionsModal";
+import locations from "@utils/locations";
+import LocationOption from "@ui/LocationOption";
 
 interface Props {}
 
@@ -36,6 +40,7 @@ const defaultInfo = {
   name: "",
   description: "",
   category: "",
+  location: "",
   price: "",
   purchasingDate: new Date(),
 };
@@ -45,6 +50,7 @@ const imageOptions = [{ value: "Remove Image", id: "remove" }];
 const NewListing: FC<Props> = ({}) => {
   const [productInfo, setProductInfo] = useState({ ...defaultInfo });
   const [showCategoryModal, setShowCategoryModal] = useState(false);
+  const [showLocationModal, setShowLocationModal] = useState(false);
 
   const [images, setImages] = useState<string[]>([]);
   const [showImageOptions, setShowImageOptions] = useState(false);
@@ -54,7 +60,8 @@ const NewListing: FC<Props> = ({}) => {
 
   const { authClient } = useClient();
 
-  const { category, description, name, price, purchasingDate } = productInfo;
+  const { category, location, description, name, price, purchasingDate } =
+    productInfo;
 
   const handleChange = (name: string) => (text: string) => {
     setProductInfo({ ...productInfo, [name]: text });
@@ -105,7 +112,6 @@ const NewListing: FC<Props> = ({}) => {
       setProductInfo({ ...defaultInfo });
       setImages([]);
     }
-
   };
 
   const handleOnImageSelection = async () => {
@@ -158,6 +164,11 @@ const NewListing: FC<Props> = ({}) => {
         <CategoryOptions
           onSelect={handleChange("category")}
           title={category || "Category"}
+        />
+
+        <LocationOptions
+          onSelect={handleChange("location")}
+          title={location || "Location"}
         />
 
         <FormInput
@@ -226,6 +237,19 @@ const styles = StyleSheet.create({
     color: colours.primary,
     padding: 10,
   },
+  location: { color: colours.primary, paddingVertical: 10 },
+  locationSelector: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    width: "100%",
+    marginBottom: 15,
+    padding: 8,
+    borderWidth: 1,
+    borderColor: colours.inActive,
+    borderRadius: 5,
+  },
+  locationTitle: { color: colours.primary },
 });
 
 export default NewListing;

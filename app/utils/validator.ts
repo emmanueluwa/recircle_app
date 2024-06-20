@@ -52,6 +52,8 @@ export const newProductSchema = yup.object({
   name: yup.string().required("Product name is missing!"),
   description: yup.string().required("Product description is missing!"),
   category: yup.string().required("Product category is missing!"),
+  location: yup.string().required("Product location is missing!"),
+
   price: yup
     .string()
     .transform((value) => {
