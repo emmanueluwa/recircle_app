@@ -1,7 +1,7 @@
 import colours from "@utils/colours";
 import size from "@utils/size";
 import { FC } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Platform, StyleSheet, Text, View } from "react-native";
 
 interface Props {}
 
@@ -24,7 +24,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: size.padding,
-    transform: [{ rotate: "180deg" }],
+    transform: Platform.select({
+      android: [{ rotate: "180deg" }],
+      ios: [{ rotate: "180deg" }, { rotateY: "-180deg" }],
+    }),
   },
   messageContainer: {
     backgroundColor: colours.inActive,

@@ -9,6 +9,7 @@ export type LatestProduct = {
   name: string;
   thumbnail?: string;
   category: string;
+  location: string;
   price: number;
 };
 

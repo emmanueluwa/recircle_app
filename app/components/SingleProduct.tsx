@@ -21,6 +21,7 @@ const SingleProduct: FC<Props> = ({ product }) => {
         {/* images */}
         <ImageSlider images={product.image} />
 
+        <Text style={styles.category}>{product.location}</Text>
         <Text style={styles.category}>{product.category}</Text>
         <Text style={styles.price}>{formatPrice(product.price)}</Text>
         <Text style={styles.date}>
