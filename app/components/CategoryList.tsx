@@ -47,6 +47,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 7,
     borderColor: colours.primary,
+    backgroundColor: "red",
   },
   categoryName: {
     fontSize: 12,
