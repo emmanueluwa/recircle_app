@@ -25,7 +25,7 @@ const SingleProduct: FC<Props> = ({ product }) => {
         <Text style={styles.category}>{product.category}</Text>
         <Text style={styles.price}>{formatPrice(product.price)}</Text>
         <Text style={styles.date}>
-          Purchased on: {formatDate(product.date, "dd LL yyy")}
+          Purchased on: {formatDate(product.date, "dd LL yyyy")}
         </Text>
         <Text style={styles.name}>{product.name}</Text>
         <Text style={styles.description}>{product.description}</Text>

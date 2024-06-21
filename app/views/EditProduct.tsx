@@ -1,39 +1,27 @@
 import AppHeader from "@components/AppHeader";
-import SingleProduct from "@components/SingleProduct";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { FontAwesome5 } from "@expo/vector-icons";
 import BackButton from "@ui/BackButton";
 import colours from "@utils/colours";
-import useAuth from "app/hooks/useAuth";
 import { ProfileNavigatorParamList } from "app/navigator/ProfileNavigator";
 import { FC, useState } from "react";
-import {
-  Alert,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import mime from "mime";
 import deepEqual from "deep-equal";
-import OptionButton from "@ui/OptionButton";
 import OptionsModal from "@components/OptionsModal";
 import useClient from "app/hooks/useClient";
 import { runAxiosAsync } from "app/api/runAxiosAsync";
 import { showMessage } from "react-native-flash-message";
 import LoadingSpinner from "@ui/LoadingSpinner";
-import { useDispatch } from "react-redux";
-import { deleteItem } from "app/store/listings";
 import size from "@utils/size";
 import HorizontalImageList from "@components/HorizontalImageList";
 import FormInput from "@ui/FormInput";
 import DatePicker from "@ui/DatePicker";
-import OptionSelector from "@ui/OptionSelector";
 import { selectImages } from "@utils/helper";
 import CategoryOptions from "@components/CategoryOptions";
 import AppButton from "@ui/AppButton";
 import { newProductSchema, yupValidate } from "@utils/validator";
+import LocationOptions from "@components/LocationOptions";
 
 type Props = NativeStackScreenProps<ProfileNavigatorParamList, "EditProduct">;
 
@@ -41,6 +29,7 @@ type ProductInfo = {
   name: string;
   description: string;
   category: string;
+  location: string;
   price: string;
   purchasingDate: Date;
 };
@@ -109,6 +98,7 @@ const EditProduct: FC<Props> = ({ route }) => {
     const dataToUpdate: ProductInfo = {
       name: product.name,
       category: product.category,
+      location: product.location,
       description: product.description,
       price: product.price,
       purchasingDate: product.date,
@@ -192,6 +182,11 @@ const EditProduct: FC<Props> = ({ route }) => {
           <CategoryOptions
             onSelect={(category) => setProduct({ ...product, category })}
             title={product.category || "Category"}
+          />
+
+          <LocationOptions
+            onSelect={(location) => setProduct({ ...product, location })}
+            title={product.location || "Location"}
           />
 
           <FormInput
